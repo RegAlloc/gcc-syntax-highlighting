@@ -75,16 +75,10 @@
 					"patterns": [
 						{
 							"name": "string.quoted.double.cpp",
-							"begin": "\"",
-							"end": "\"",
-							"beginCaptures": { "0": { "name": "punctuation.definition.string.begin.cpp" } },
-							"endCaptures": { "0": { "name": "punctuation.definition.string.end.cpp" } },
-							"patterns": [
-								{
-									"name": "constant.character.escape.cpp",
-									"match": "\\\\."
-								}
-							]
+							"match": "\"(?:[^\"\\\\]|\\\\.)*\"",
+							"captures": {
+								"0": { "name": "string.quoted.double.cpp" }
+							}
 						},
 						{
 							"name": "string.quoted.single.cpp",
