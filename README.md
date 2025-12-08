@@ -45,3 +45,10 @@ In short, this repo is useful any time you are:
 - Inspecting GIMPLE or RTL dumps produced by GCC.
 - Working on `match.pd` or `.md` files and want them to be readable inside VS Code / VSCodium instead of in a bare terminal.
 
+## Syntax Highlighting Preview
+
+### Match Pattern
+![Match](pictures/Match.png)
+
+### GCC Machine Description
+![GCC Machine Description](pictures/GCC-Machine-Description.png)

@@ -5,7 +5,7 @@
   "description": "Syntax highlighting for GCC RTL, Gimple, Match.pd, and Machine Description files",
   "version": "0.1.0",
   "publisher": "RegAlloc",
-  "icon": "icon/gcc.png",
+  "icon": "pictures/gcc.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/RegAlloc/gcc-syntax-highlighting/"
@@ -37,8 +37,8 @@
         "extensions": [".md"],
         "configuration": "./language-configuration.json",
         "icon": {
-          "light": "./icon/gcc.png",
-          "dark": "./icon/gcc.png"
+          "light": "./pictures/gcc.png",
+          "dark": "./pictures/gcc.png"
         }
       },
       {
@@ -47,8 +47,8 @@
         "filenamePatterns": ["**/*.[0-9][0-9][0-9]r.*"],
         "configuration": "./language-configuration.json",
         "icon": {
-          "light": "./icon/gcc.png",
-          "dark": "./icon/gcc.png"
+          "light": "./pictures/gcc.png",
+          "dark": "./pictures/gcc.png"
         }
       },
       {
@@ -57,8 +57,8 @@
         "filenamePatterns": ["**/*.[0-9][0-9][0-9]t.*", "**/*.[0-9][0-9][0-9]i.*"],
         "configuration": "./language-configuration.json",
         "icon": {
-          "light": "./icon/gcc.png",
-          "dark": "./icon/gcc.png"
+          "light": "./pictures/gcc.png",
+          "dark": "./pictures/gcc.png"
         }
       },
       {
@@ -67,8 +67,8 @@
         "extensions": [".pd"],
         "configuration": "./language-configuration.json",
         "icon": {
-          "light": "./icon/gcc.png",
-          "dark": "./icon/gcc.png"
+          "light": "./pictures/gcc.png",
+          "dark": "./pictures/gcc.png"
         }
       }
     ],
