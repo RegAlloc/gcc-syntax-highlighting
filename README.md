@@ -5,6 +5,13 @@
 This repository contains a Visual Studio Code / VSCodium extension that adds syntax highlighting for **GCC internals**.
 It is aimed at people working on GCC itself or regularly reading GCC dumps.
 
+## License
+
+This project is licensed under the GNU General Public License v3.0 or later (GPL-3.0-or-later).
+
+See the [LICENSE](./LICENSE) file for details.
+
+
 ## What this is useful for
 
 When hacking on GCC you often need to read and understand:

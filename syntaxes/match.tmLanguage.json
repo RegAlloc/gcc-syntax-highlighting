@@ -1,279 +1,359 @@
 {
-	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-	"name": "gcc-match-pd",
-	"scopeName": "source.gcc.match",
-	"fileTypes": [
-		"match.pd"
-	],
-	"patterns": [
-		{ "include": "#comments" },
-		{ "include": "#preprocessor" },
-		{ "include": "#cpp-blocks" },
-		{ "include": "#strings" },
-		{ "include": "#numbers" },
-		{ "include": "#expressions" }
-	],
-	"repository": {
-		"comments": {
-			"patterns": [
-				{
-					"comment": "Block comments",
-					"name": "comment.block.gcc.match",
-					"begin": "/\\*",
-					"end": "\\*/"
-				},
-				{
-					"comment": "Line comments",
-					"name": "comment.line.double-slash.gcc.match",
-					"match": "//.*$"
-				}
-			]
-		},
-		"preprocessor": {
-			"patterns": [
-				{
-					"match": "^\\s*#\\s*(include|define|undef|if|ifdef|ifndef|elif|else|endif|error|pragma)\\b",
-					"name": "keyword.control.directive.gcc.match"
-				},
-				{
-					"match": "^\\s*#\\s*define\\s+([A-Za-z_][A-Za-z0-9_]*)\\b",
-					"captures": {
-						"1": { "name": "entity.name.function.preprocessor.gcc.match" }
-					}
-				}
-			]
-		},
-		"cpp-blocks": {
-			"patterns": [
-				{
-					"name": "meta.embedded.cpp.gcc-md",
-					"begin": "\\{",
-					"end": "\\}",
-					"beginCaptures": { "0": { "name": "punctuation.section.block.begin.bracket.curly.cpp" } },
-					"endCaptures": { "0": { "name": "punctuation.section.block.end.bracket.curly.cpp" } },
-					"patterns": [
-						{
-							"name": "string.quoted.double.cpp",
-							"match": "\"(?:[^\"\\\\]|\\\\.)*\"",
-							"captures": {
-								"0": { "name": "string.quoted.double.cpp" }
-							}
-						},
-						{
-							"name": "string.quoted.single.cpp",
-							"begin": "'",
-							"end": "'",
-							"beginCaptures": { "0": { "name": "punctuation.definition.string.begin.cpp" } },
-							"endCaptures": { "0": { "name": "punctuation.definition.string.end.cpp" } },
-							"patterns": [
-								{
-									"name": "constant.character.escape.cpp",
-									"match": "\\\\."
-								}
-							]
-						},
-						{
-							"name": "comment.line.double-slash.cpp",
-							"match": "//[^\\n]*"
-						},
-						{
-							"name": "comment.block.cpp",
-							"begin": "/\\*",
-							"end": "\\*/"
-						},
-						{
-							"include": "#cpp-blocks"
-						},
-						{
-							"name": "keyword.control.cpp",
-							"match": "\\b(if|else|while|for|do|switch|case|default|break|continue|return|goto|try|catch|throw|using|inline)\\b"
-						},
-						{
-							"name": "storage.type.cpp",
-							"match": "\\b(poly_int64|int|float|double|char|void|bool|long|short|unsigned|signed|auto|const|volatile|static|register|extern|typedef|struct|class|union|enum|tree|wide_int|vec_perm_indices)\\b"
-						},
-						{
-							"name": "constant.language.cpp",
-							"match": "\\b(true|false|NULL|nullptr)\\b"
-						},
-						{
-							"name": "keyword.operator.cpp",
-							"match": "(->|::|\\.\\.\\.|<<|>>|<=|>=|==|!=|&&|\\|\\|)"
-						},
-						{
-							"name": "constant.numeric.hex.cpp",
-							"match": "0[xX][0-9a-fA-F]+[uUlL]*"
-						},
-						{
-							"name": "constant.numeric.float.cpp",
-							"match": "([0-9]*\\.[0-9]+|[0-9]+\\.)([eE][+-]?[0-9]+)?[fFdD]?"
-						},
-						{
-							"name": "constant.numeric.integer.cpp",
-							"match": "[0-9]+[uUlL]*"
-						},
-						{
-							"name": "variable.other.constant.cpp",
-							"match": "\\b(HOST_WIDE_[A-Z0-9_]+)\\b"
-						},
-						{
-							"name": "entity.name.function.cpp",
-							"match": "([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()"
-						},
-						{
-							"name": "variable.other.cpp",
-							"match": "[a-zA-Z_][a-zA-Z0-9_]*"
-						},
-						{
-							"name": "punctuation.separator.cpp",
-							"match": "[;,.]"
-						}
-					]
-				}
-			]
-		},
-		"strings": {
-			"patterns": [
-				{
-					"name": "string.quoted.double.gcc.match",
-					"begin": "\"",
-					"end": "\"",
-					"patterns": [
-						{ "match": "\\\\.", "name": "constant.character.escape.gcc.match" }
-					]
-				}
-			]
-		},
-		"numbers": {
-			"patterns": [
-				{ "match": "\\b0x[0-9a-fA-F]+\\b", "name": "constant.numeric.hex.gcc.match" },
-				{ "match": "\\b-?\\d+\\.\\d+([eE][+-]?\\d+)?\\b", "name": "constant.numeric.float.gcc.match" },
-				{ "match": "\\b-?\\d+\\b", "name": "constant.numeric.integer.gcc.match" }
-			]
-		},
-		"primary-keywords": {
-			"patterns": [
-				{
-					"comment": "Top level definition keywords",
-					"name": "keyword.control.definition.gcc.match",
-					"match": "\\b(match|simplify|optimize|define_predicates|define_operator_list|define_match_and_simplify|define_dump_file)\\b"
-				}
-			]
-		},
-		"flow-keywords": {
-			"patterns": [
-				{
-					"comment": "Control flow keywords",
-					"name": "keyword.control.flow.gcc.match",
-					"match": "\\b(if|switch|for|with|else|then|in|cond|cond\\^|cond_len|cond_convert|vec_cond|vec_cond_mask|let)\\b"
-				},
-				{
-					"comment": "GOTO/Return",
-					"name": "keyword.control.statement.gcc.match",
-					"match": "\\b(goto|return)\\b"
-				}
-			]
-		},
-		"captures": {
-			"patterns": [
-				{
-					"comment": "Capture variables like @0 or @@0",
-					"name": "variable.parameter.capture.gcc.match",
-					"match": "@@?[a-zA-Z0-9_]+"
-				}
-			]
-		},
-		"types": {
-			"patterns": [
-				{
-					"match": "\\b(type|TREE_TYPE|bool|char|int|long|short|float|double|void|unsigned|signed|const|auto)\\b",
-					"name": "storage.type.gcc.match"
-				},
-				{
-					"match": ":[cCsS]+",
-					"name": "storage.modifier.gcc.match"
-				}
-			]
-		},
-		"arithmetic-ops": {
-			"patterns": [
-				{
-					"name": "support.function.operator.arithmetic.gcc.match",
-					"match": "\\b(plus|minus|negate|mult|mult_highpart|trunc_div|ceil_div|floor_div|round_div|trunc_mod|ceil_mod|floor_mod|round_mod|rdiv|exact_div|fix_trunc|float|float_truncate|float_extend|abs|absu|min|max|fmin|fmax|sqrt|cbrt|pow|hypot|copysign|fmod|drem|remainder|rint|round|trunc|nearbyint|ceil|floor|significand|logb|ilogb|scalb|scalbn|scalbln|ldexp|frexp|signbit|unsigned_sat_add|signed_sat_add|unsigned_sat_sub|signed_sat_sub)\\b"
-				}
-			]
-		},
-		"bitwise-ops": {
-			"patterns": [
-				{
-					"name": "support.function.operator.bitwise.gcc.match",
-					"match": "\\b(lshift|rshift|lrotate|rrotate|bit_ior|bit_xor|bit_and|bit_not|bit_insert|popcount|clz|ctz|clrsb|parity|ffs|bit_field_ref)\\b"
-				}
-			]
-		},
-		"logical-ops": {
-			"patterns": [
-				{
-					"name": "support.function.operator.logical.gcc.match",
-					"match": "\\b(truth_andif|truth_orif|truth_and|truth_or|truth_xor|truth_not|lt|le|gt|ge|eq|ne|unordered|ordered|unlt|unle|ungt|unge|uneq|ltgt)\\b"
-				}
-			]
-		},
-		"vector-ops": {
-			"patterns": [
-				{
-					"name": "support.function.operator.vector.gcc.match",
-					"match": "\\b(vec_perm|vec_perm_expr|vec_same_elem_p|vec_duplicate|vec_series|vec_cmp|view_convert)\\b"
-				}
-			]
-		},
-		"constants": {
-			"patterns": [
-				{
-					"name": "constant.language.gcc.match",
-					"match": "\\b(true|false|NULL|nullptr|null)\\b"
-				},
-				{
-					"name": "constant.other.tree-code.gcc.match",
-					"match": "\\b(INTEGER_CST|REAL_CST|COMPLEX_CST|STRING_CST|VECTOR_CST|SSA_NAME)\\b"
-				},
-				{
-					"name": "support.constant.predicate.gcc.match",
-					"match": "\\b(integer_zerop|integer_onep|integer_minus_onep|integer_all_onesp|real_zerop|real_onep|real_minus_onep|integer_pow2p)\\b"
-				},
-				{
-					"name": "variable.other.constant.gcc.match",
-					"match": "\\b(BUILT_IN_[A-Z0-9_]+|IFN_[A-Z0-9_]+|CFN_[A-Z0-9_]+)\\b"
-				}
-			]
-		},
-		"expressions": {
-			"name": "meta.expression.gcc.match",
-			"begin": "\\(",
-			"end": "\\)",
-			"beginCaptures": {
-				"0": { "name": "punctuation.section.expression.begin.gcc.match" }
-			},
-			"endCaptures": {
-				"0": { "name": "punctuation.section.expression.end.gcc.match" }
-			},
-			"patterns": [
-				{ "include": "#comments" },
-				{ "include": "#strings" },
-				{ "include": "#cpp-blocks" },
-				{ "include": "#numbers" },
-				{ "include": "#primary-keywords" },
-				{ "include": "#flow-keywords" },
-				{ "include": "#captures" },
-				{ "include": "#types" },
-				{ "include": "#arithmetic-ops" },
-				{ "include": "#bitwise-ops" },
-				{ "include": "#logical-ops" },
-				{ "include": "#vector-ops" },
-				{ "include": "#constants" },
-				{ "include": "$self" }
-			]
-		}
-	}
+  "_license": {
+    "name": "GPL-3.0-or-later",
+    "copyright": "Copyright (C) 2025 Kishan Parmar",
+    "notice": "This file is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version. This file is distributed WITHOUT ANY WARRANTY. See https://www.gnu.org/licenses/ for details."
+  },
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "gcc-match-pd",
+  "scopeName": "source.gcc.match",
+  "fileTypes": [
+    "match.pd"
+  ],
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#preprocessor"
+    },
+    {
+      "include": "#cpp-blocks"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#expressions"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "comment": "Block comments",
+          "name": "comment.block.gcc.match",
+          "begin": "/\\*",
+          "end": "\\*/"
+        },
+        {
+          "comment": "Line comments",
+          "name": "comment.line.double-slash.gcc.match",
+          "match": "//.*$"
+        }
+      ]
+    },
+    "preprocessor": {
+      "patterns": [
+        {
+          "match": "^\\s*#\\s*(include|define|undef|if|ifdef|ifndef|elif|else|endif|error|pragma)\\b",
+          "name": "keyword.control.directive.gcc.match"
+        },
+        {
+          "match": "^\\s*#\\s*define\\s+([A-Za-z_][A-Za-z0-9_]*)\\b",
+          "captures": {
+            "1": {
+              "name": "entity.name.function.preprocessor.gcc.match"
+            }
+          }
+        }
+      ]
+    },
+    "cpp-blocks": {
+      "patterns": [
+        {
+          "name": "meta.embedded.cpp.gcc-md",
+          "begin": "\\{",
+          "end": "\\}",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.section.block.begin.bracket.curly.cpp"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.block.end.bracket.curly.cpp"
+            }
+          },
+          "patterns": [
+            {
+              "name": "string.quoted.double.cpp",
+              "match": "\"(?:[^\"\\\\]|\\\\.)*\"",
+              "captures": {
+                "0": {
+                  "name": "string.quoted.double.cpp"
+                }
+              }
+            },
+            {
+              "name": "string.quoted.single.cpp",
+              "begin": "'",
+              "end": "'",
+              "beginCaptures": {
+                "0": {
+                  "name": "punctuation.definition.string.begin.cpp"
+                }
+              },
+              "endCaptures": {
+                "0": {
+                  "name": "punctuation.definition.string.end.cpp"
+                }
+              },
+              "patterns": [
+                {
+                  "name": "constant.character.escape.cpp",
+                  "match": "\\\\."
+                }
+              ]
+            },
+            {
+              "name": "comment.line.double-slash.cpp",
+              "match": "//[^\\n]*"
+            },
+            {
+              "name": "comment.block.cpp",
+              "begin": "/\\*",
+              "end": "\\*/"
+            },
+            {
+              "include": "#cpp-blocks"
+            },
+            {
+              "name": "keyword.control.cpp",
+              "match": "\\b(if|else|while|for|do|switch|case|default|break|continue|return|goto|try|catch|throw|using|inline)\\b"
+            },
+            {
+              "name": "storage.type.cpp",
+              "match": "\\b(poly_int64|int|float|double|char|void|bool|long|short|unsigned|signed|auto|const|volatile|static|register|extern|typedef|struct|class|union|enum|tree|wide_int|vec_perm_indices)\\b"
+            },
+            {
+              "name": "constant.language.cpp",
+              "match": "\\b(true|false|NULL|nullptr)\\b"
+            },
+            {
+              "name": "keyword.operator.cpp",
+              "match": "(->|::|\\.\\.\\.|<<|>>|<=|>=|==|!=|&&|\\|\\|)"
+            },
+            {
+              "name": "constant.numeric.hex.cpp",
+              "match": "0[xX][0-9a-fA-F]+[uUlL]*"
+            },
+            {
+              "name": "constant.numeric.float.cpp",
+              "match": "([0-9]*\\.[0-9]+|[0-9]+\\.)([eE][+-]?[0-9]+)?[fFdD]?"
+            },
+            {
+              "name": "constant.numeric.integer.cpp",
+              "match": "[0-9]+[uUlL]*"
+            },
+            {
+              "name": "variable.other.constant.cpp",
+              "match": "\\b(HOST_WIDE_[A-Z0-9_]+)\\b"
+            },
+            {
+              "name": "entity.name.function.cpp",
+              "match": "([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()"
+            },
+            {
+              "name": "variable.other.cpp",
+              "match": "[a-zA-Z_][a-zA-Z0-9_]*"
+            },
+            {
+              "name": "punctuation.separator.cpp",
+              "match": "[;,.]"
+            }
+          ]
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.gcc.match",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "match": "\\\\.",
+              "name": "constant.character.escape.gcc.match"
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "match": "\\b0x[0-9a-fA-F]+\\b",
+          "name": "constant.numeric.hex.gcc.match"
+        },
+        {
+          "match": "\\b-?\\d+\\.\\d+([eE][+-]?\\d+)?\\b",
+          "name": "constant.numeric.float.gcc.match"
+        },
+        {
+          "match": "\\b-?\\d+\\b",
+          "name": "constant.numeric.integer.gcc.match"
+        }
+      ]
+    },
+    "primary-keywords": {
+      "patterns": [
+        {
+          "comment": "Top level definition keywords",
+          "name": "keyword.control.definition.gcc.match",
+          "match": "\\b(match|simplify|optimize|define_predicates|define_operator_list|define_match_and_simplify|define_dump_file)\\b"
+        }
+      ]
+    },
+    "flow-keywords": {
+      "patterns": [
+        {
+          "comment": "Control flow keywords",
+          "name": "keyword.control.flow.gcc.match",
+          "match": "\\b(if|switch|for|with|else|then|in|cond|cond\\^|cond_len|cond_convert|vec_cond|vec_cond_mask|let)\\b"
+        },
+        {
+          "comment": "GOTO/Return",
+          "name": "keyword.control.statement.gcc.match",
+          "match": "\\b(goto|return)\\b"
+        }
+      ]
+    },
+    "captures": {
+      "patterns": [
+        {
+          "comment": "Capture variables like @0 or @@0",
+          "name": "variable.parameter.capture.gcc.match",
+          "match": "@@?[a-zA-Z0-9_]+"
+        }
+      ]
+    },
+    "types": {
+      "patterns": [
+        {
+          "match": "\\b(type|TREE_TYPE|bool|char|int|long|short|float|double|void|unsigned|signed|const|auto)\\b",
+          "name": "storage.type.gcc.match"
+        },
+        {
+          "match": ":[cCsS]+",
+          "name": "storage.modifier.gcc.match"
+        }
+      ]
+    },
+    "arithmetic-ops": {
+      "patterns": [
+        {
+          "name": "support.function.operator.arithmetic.gcc.match",
+          "match": "\\b(plus|minus|negate|mult|mult_highpart|trunc_div|ceil_div|floor_div|round_div|trunc_mod|ceil_mod|floor_mod|round_mod|rdiv|exact_div|fix_trunc|float|float_truncate|float_extend|abs|absu|min|max|fmin|fmax|sqrt|cbrt|pow|hypot|copysign|fmod|drem|remainder|rint|round|trunc|nearbyint|ceil|floor|significand|logb|ilogb|scalb|scalbn|scalbln|ldexp|frexp|signbit|unsigned_sat_add|signed_sat_add|unsigned_sat_sub|signed_sat_sub)\\b"
+        }
+      ]
+    },
+    "bitwise-ops": {
+      "patterns": [
+        {
+          "name": "support.function.operator.bitwise.gcc.match",
+          "match": "\\b(lshift|rshift|lrotate|rrotate|bit_ior|bit_xor|bit_and|bit_not|bit_insert|popcount|clz|ctz|clrsb|parity|ffs|bit_field_ref)\\b"
+        }
+      ]
+    },
+    "logical-ops": {
+      "patterns": [
+        {
+          "name": "support.function.operator.logical.gcc.match",
+          "match": "\\b(truth_andif|truth_orif|truth_and|truth_or|truth_xor|truth_not|lt|le|gt|ge|eq|ne|unordered|ordered|unlt|unle|ungt|unge|uneq|ltgt)\\b"
+        }
+      ]
+    },
+    "vector-ops": {
+      "patterns": [
+        {
+          "name": "support.function.operator.vector.gcc.match",
+          "match": "\\b(vec_perm|vec_perm_expr|vec_same_elem_p|vec_duplicate|vec_series|vec_cmp|view_convert)\\b"
+        }
+      ]
+    },
+    "constants": {
+      "patterns": [
+        {
+          "name": "constant.language.gcc.match",
+          "match": "\\b(true|false|NULL|nullptr|null)\\b"
+        },
+        {
+          "name": "constant.other.tree-code.gcc.match",
+          "match": "\\b(INTEGER_CST|REAL_CST|COMPLEX_CST|STRING_CST|VECTOR_CST|SSA_NAME)\\b"
+        },
+        {
+          "name": "support.constant.predicate.gcc.match",
+          "match": "\\b(integer_zerop|integer_onep|integer_minus_onep|integer_all_onesp|real_zerop|real_onep|real_minus_onep|integer_pow2p)\\b"
+        },
+        {
+          "name": "variable.other.constant.gcc.match",
+          "match": "\\b(BUILT_IN_[A-Z0-9_]+|IFN_[A-Z0-9_]+|CFN_[A-Z0-9_]+)\\b"
+        }
+      ]
+    },
+    "expressions": {
+      "name": "meta.expression.gcc.match",
+      "begin": "\\(",
+      "end": "\\)",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.section.expression.begin.gcc.match"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.expression.end.gcc.match"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#cpp-blocks"
+        },
+        {
+          "include": "#numbers"
+        },
+        {
+          "include": "#primary-keywords"
+        },
+        {
+          "include": "#flow-keywords"
+        },
+        {
+          "include": "#captures"
+        },
+        {
+          "include": "#types"
+        },
+        {
+          "include": "#arithmetic-ops"
+        },
+        {
+          "include": "#bitwise-ops"
+        },
+        {
+          "include": "#logical-ops"
+        },
+        {
+          "include": "#vector-ops"
+        },
+        {
+          "include": "#constants"
+        },
+        {
+          "include": "$self"
+        }
+      ]
+    }
+  }
 }
-

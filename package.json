@@ -1,3 +1,4 @@
+
 {
   "name": "gcc-syntax-highlighting",
   "displayName": "GCC Syntax Highlighting",
@@ -8,6 +9,11 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/RegAlloc/gcc-syntax-highlighting/"
+  },
+  "_license": {
+    "name": "GPL-3.0-or-later",
+    "copyright": "Copyright (C) 2025 Kishan Parmar",
+    "notice": "This file is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version. This file is distributed WITHOUT ANY WARRANTY. See https://www.gnu.org/licenses/ for details."
   },
   "keywords": [
   "gcc", "gnu",
