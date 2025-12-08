@@ -1,84 +1,180 @@
 {
   "scopeName": "source.gcc.gimple",
-  "patterns": [
-    { "include": "#comments" },
-    { "include": "#function-header" },
-    { "include": "#labels" },
-    { "include": "#metadata" },
-    { "include": "#phi-nodes" },
-    { "include": "#gimple-keywords" },
-    { "include": "#operators" },
-    { "include": "#control-flow" },
-    { "include": "#types" },
-    { "include": "#variables" },
-    { "include": "#constants" },
-    { "include": "#strings" },
-    { "include": "#numbers" }
-  ],
-  "repository": {
-    "comments": {
-      "patterns": [
-        { "match": "//.*$", "name": "comment.line.double-slash.gcc.gimple" },
-        { "match": ";;.*$", "name": "comment.line.double-semicolon.gcc.gimple" }
-      ]
-    },
-    "function-header": {
-      "match": "^(\\w+\\s+)+\\w+\\s+\\(\\s*\\)",
-      "name": "markup.heading.function.gcc.gimple"
-    },
-    "labels": {
-      "match": "<[a-zA-Z0-9_.]+>:",
-      "name": "entity.name.label.gcc.gimple"
-    },
-    "metadata": {
-      "patterns": [
-        { "match": "<bb \\d+>", "name": "entity.name.label.basic-block.gcc.gimple" },
-        { "match": "\\[\\d+\\.\\d+%\\]", "name": "constant.numeric.frequency.gcc.gimple" },
-        { "match": "count: \\d+", "name": "constant.numeric.count.gcc.gimple" },
-        { "match": "loop_depth\\s+\\d+", "name": "constant.numeric.loop-depth.gcc.gimple" }
-      ]
-    },
-    "phi-nodes": {
-      "match": "#\\s+([a-zA-Z0-9_]+)\\s+=\\s+PHI\\s+<",
-      "captures": {
-        "1": { "name": "variable.parameter.phi-result.gcc.gimple" }
-      },
-      "name": "meta.phi-node.gcc.gimple"
-    },
-    "gimple-keywords": {
-      "match": "\\b(gimple_call|gimple_assign|gimple_cond|gimple_label|gimple_switch|gimple_return|gimple_goto|gimple_asm|gimple_nop|gimple_debug|gimple_predict|gimple_phi|gimple_catch|gimple_eh_filter|gimple_try|gimple_resx|gimple_bind|gimple_omp_parallel|gimple_omp_for|gimple_omp_task|gimple_omp_target|gimple_omp_sections|gimple_omp_single|gimple_omp_critical|gimple_omp_ordered|gimple_omp_scan|gimple_transaction|gimple_omp_atomic_load|gimple_omp_atomic_store|MEM|ARRAY_REF|COMPONENT_REF|BIT_FIELD_REF|VIEW_CONVERT_EXPR|REALPART_EXPR|IMAGPART_EXPR)\\b",
-      "name": "support.function.gimple-stmt.gcc.gimple"
-    },
-    "operators": {
-      "match": "\\b(plus|minus|negate|mult|trunc_div|ceil_div|floor_div|round_div|trunc_mod|rdiv|exact_div|min|max|bit_and|bit_ior|bit_xor|bit_not|lshift|rshift|lt|le|gt|ge|eq|ne|unordered|ordered|unlt|unle|ungt|unge|uneq|ltgt|logical_and|logical_or|logical_not|truth_and|truth_or|truth_xor|truth_not|addr_space_convert|fixed_convert|float|fix|sign_extend|zero_extend|truncate|abs|absu|sqrt|cbrt|fma)\\b",
-      "name": "keyword.operator.gimple.gcc.gimple"
-    },
-    "control-flow": {
-      "match": "\\b(if|else|goto|return|switch|case|default|break|continue|try|catch|finally|throw)\\b",
-      "name": "keyword.control.gcc.gimple"
-    },
-    "types": {
-      "match": "\\b(void|_Bool|bool|char|int|long|float|double|signed|unsigned|short|int8_t|uint8_t|int16_t|uint16_t|int32_t|uint32_t|int64_t|uint64_t|intptr_t|uintptr_t|size_t|ssize_t|ptrdiff_t|wchar_t|struct|union|enum|const|volatile|restrict|static|extern|inline|auto|register)\\b",
-      "name": "storage.type.gcc.gimple"
-    },
-    "variables": {
-      "match": "\\b([a-zA-Z_][a-zA-Z0-9_.]*)(?=\\s*[=:]|\\s*\\[)",
-      "name": "variable.other.gimple.gcc.gimple"
-    },
-    "constants": {
-      "match": "\\b(NULL|TRUE|FALSE|true|false|nullptr)\\b",
-      "name": "constant.language.gcc.gimple"
-    },
-    "strings": {
-      "match": "\"(?:[^\"\\\\]|\\\\.)*\"",
-      "name": "string.quoted.double.gcc.gimple"
-    },
-    "numbers": {
-      "patterns": [
-        { "match": "\\b0x[0-9a-fA-F]+\\b", "name": "constant.numeric.hex.gcc.gimple" },
-        { "match": "\\b-?\\d+\\.\\d+([eE][+-]?\\d+)?\\b", "name": "constant.numeric.float.gcc.gimple" },
-        { "match": "\\b-?\\d+\\b", "name": "constant.numeric.integer.gcc.gimple" }
-      ]
-    }
-  }
+      "patterns":
+          [
+            {"include" : "#comments"},
+            {"include" : "#function-header"},
+            {"include" : "#labels"},
+            {"include" : "#basic-blocks"},
+            {"include" : "#edges"},
+            {"include" : "#metadata"},
+            {"include" : "#phi-nodes"},
+            {"include" : "#internal-expr-calls"},
+            {"include" : "#gcc-internal-types"},
+            {"include" : "#ssa-names"},
+            {"include" : "#gimple-keywords"},
+            {"include" : "#internal-functions"},
+            {"include" : "#operators"},
+            {"include" : "#control-flow"},
+            {"include" : "#memory"},
+            {"include" : "#types"},
+            {"include" : "#variables"},
+            {"include" : "#constants"},
+            {"include" : "#strings"},
+            {"include" : "#numbers"},
+            {"include" : "#angle-arguments"}
+          ],
+
+      "repository": {
+
+        "comments": {
+          "patterns":
+              [
+                {
+                  "match" : "//.*$",
+                  "name" : "comment.line.double-slash.gcc.gimple"
+                },
+                {
+                  "match" : ";;.*$",
+                  "name" : "comment.line.double-semicolon.gcc.gimple"
+                }
+              ]
+        },
+
+        "function-header": {
+          "match": "^;; Function\\s+([a-zA-Z0-9_$.]+)",
+          "captures": {"1": {"name": "entity.name.function.gcc.gimple"}},
+          "name": "markup.heading.function.gcc.gimple"
+        },
+        "internal-expr-calls": {
+          "patterns": [ {
+            "match" :
+                "\\b(PHI|MAX_EXPR|MIN_EXPR|COND_EXPR|VEC_PERM_EXPR|VEC_SELECT_EXPR|VEC_PACK_EXPR|VEC_UNPACK_EXPR|DOT_PROD_EXPR|WIDEN_SUM_EXPR|SAD_EXPR|BIT_INSERT_EXPR|BIT_EXTRACT_EXPR|COMPLEX_EXPR|REALPART_EXPR|IMAGPART_EXPR|FMA_EXPR|RSQRT_EXPR|POW_EXPR)\\b\\s*<",
+            "captures" :
+                {"1" : {"name" : "support.function.internal-expr.gcc.gimple"}},
+            "name" : "meta.internal-expr-call.gcc.gimple"
+          } ]
+        },
+        "gcc-internal-types": {
+          "match":
+              "\\b(sizetype|ssizetype|bitsizetype|uintptr_type|ptr_type|reference_type|vector_type|complex_type|boolean_type|void_type|integer_type|real_type|enumeral_type|array_type|record_type|union_type)\\b",
+          "name": "storage.type.internal.gcc.gimple"
+        },
+        "angle-arguments":
+            {"match": "<[^>]+>", "name": "meta.angle-arguments.gcc.gimple"},
+        "labels": {
+          "match": "<[a-zA-Z0-9_.]+>:",
+          "name": "entity.name.label.gcc.gimple"
+        },
+
+        "basic-blocks": {
+          "match": "<bb \\d+>",
+          "name": "entity.name.label.basic-block.gcc.gimple"
+        },
+
+        "edges":
+            {"match": "edge \\d+->\\d+", "name": "entity.name.edge.gcc.gimple"},
+
+        "metadata": {
+          "patterns":
+              [
+                {
+                  "match" : "\\[\\d+\\.\\d+%\\]",
+                  "name" : "constant.numeric.frequency.gcc.gimple"
+                },
+                {
+                  "match" : "count: \\d+",
+                  "name" : "constant.numeric.count.gcc.gimple"
+                },
+                {
+                  "match" : "loop_depth\\s+\\d+",
+                  "name" : "constant.numeric.loop-depth.gcc.gimple"
+                },
+                {
+                  "match" : "EH region \\d+",
+                  "name" : "entity.name.exception-region.gcc.gimple"
+                }
+              ]
+        },
+
+        "phi-nodes": {
+          "match": "#\\s+(_\\d+)\\s+=\\s+PHI\\s+<",
+          "captures":
+              {"1": {"name": "variable.parameter.phi-result.gcc.gimple"}},
+          "name": "meta.phi-node.gcc.gimple"
+        },
+
+        "ssa-names": {
+          "match": "\\b_[0-9]+\\b",
+          "name": "variable.other.ssa-name.gcc.gimple"
+        },
+
+        "gimple-keywords": {
+          "match":
+              "\\b(gimple_assign|gimple_call|gimple_cond|gimple_label|gimple_switch|gimple_return|gimple_goto|gimple_asm|gimple_nop|gimple_debug|gimple_predict|gimple_phi|gimple_catch|gimple_eh_filter|gimple_try|gimple_resx|gimple_bind|gimple_omp_parallel|gimple_omp_for|gimple_omp_task|gimple_omp_target|gimple_omp_sections|gimple_omp_single|gimple_omp_critical|gimple_omp_ordered|gimple_omp_scan|gimple_transaction|gimple_omp_atomic_load|gimple_omp_atomic_store)\\b",
+          "name": "support.function.gimple-stmt.gcc.gimple"
+        },
+
+        "internal-functions": {
+          "match": "\\bIFN_[A-Z0-9_]+\\b",
+          "name": "support.function.internal.gcc.gimple"
+        },
+
+        "operators": {
+          "match":
+              "\\b(plus|minus|negate|mult|trunc_div|ceil_div|floor_div|round_div|trunc_mod|rdiv|exact_div|min|max|bit_and|bit_ior|bit_xor|bit_not|lshift|rshift|lt|le|gt|ge|eq|ne|unordered|ordered|unlt|unle|ungt|unge|uneq|ltgt|logical_and|logical_or|logical_not|truth_and|truth_or|truth_xor|truth_not|addr_space_convert|fixed_convert|float|fix|sign_extend|zero_extend|truncate|abs|absu|sqrt|cbrt|fma|vec_pack|vec_unpack|vec_perm)\\b",
+          "name": "keyword.operator.gimple.gcc.gimple"
+        },
+
+        "control-flow": {
+          "match":
+              "\\b(if|else|goto|return|switch|case|default|break|continue|try|catch|finally|throw|resx)\\b",
+          "name": "keyword.control.gcc.gimple"
+        },
+
+        "memory": {
+          "match":
+              "\\b(MEM_REF|ARRAY_REF|COMPONENT_REF|BIT_FIELD_REF|VIEW_CONVERT_EXPR|REALPART_EXPR|IMAGPART_EXPR|TARGET_MEM_REF)\\b",
+          "name": "support.type.memory.gcc.gimple"
+        },
+
+        "types": {
+          "match":
+              "\\b(void|_Bool|bool|char|int|long|float|double|signed|unsigned|short|int8_t|uint8_t|int16_t|uint16_t|int32_t|uint32_t|int64_t|uint64_t|intptr_t|uintptr_t|size_t|ssize_t|ptrdiff_t|wchar_t|struct|union|enum|const|volatile|restrict|static|extern|inline|auto|register|complex|vector)\\b",
+          "name": "storage.type.gcc.gimple"
+        },
+
+        "variables": {
+          "match": "\\b([a-zA-Z_][a-zA-Z0-9_.]*)(?=\\s*[=:]|\\s*\\[)",
+          "name": "variable.other.gimple.gcc.gimple"
+        },
+
+        "constants": {
+          "match": "\\b(NULL|TRUE|FALSE|true|false|nullptr)\\b",
+          "name": "constant.language.gcc.gimple"
+        },
+
+        "strings": {
+          "match": "\"(?:[^\"\\\\]|\\\\.)*\"",
+          "name": "string.quoted.double.gcc.gimple"
+        },
+
+        "numbers": {
+          "patterns":
+              [
+                {
+                  "match" : "\\b0x[0-9a-fA-F]+\\b",
+                  "name" : "constant.numeric.hex.gcc.gimple"
+                },
+                {
+                  "match" : "\\b-?\\d+\\.\\d+([eE][+-]?\\d+)?\\b",
+                  "name" : "constant.numeric.float.gcc.gimple"
+                },
+                {
+                  "match" : "\\b-?\\d+\\b",
+                  "name" : "constant.numeric.integer.gcc.gimple"
+                }
+              ]
+        }
+      }
 }

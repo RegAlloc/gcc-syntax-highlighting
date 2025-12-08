@@ -1,241 +1,280 @@
 {
   "scopeName": "source.gcc.rtl",
-  "patterns": [
-    { "include": "#comments" },
-    { "include": "#headers" },
-    { "include": "#instructions" },
-    { "include": "#note-directives" },
-    { "include": "#block-info" },
-    { "include": "#paren-keywords" },
-    { "include": "#instruction-names" },
-    { "include": "#instruction-patterns" },
-    { "include": "#registers" },
-    { "include": "#constants" },
-    { "include": "#modes" },
-    { "include": "#labels" },
-    { "include": "#operands" },
-    { "include": "#attributes" },
-    { "include": "#rtl-operators" },
-    { "include": "#rtl-keywords" },
-    { "include": "#strings" },
-    { "include": "#numbers" }
-  ],
-  "repository": {
-    "comments": {
-      "patterns": [
-        { "match": ";;.*$", "name": "comment.line.double-semicolon.gcc.rtl" },
-        { "match": ";.*$", "name": "comment.line.semicolon.gcc.rtl" }
-      ]
-    },
-    "headers": {
-      "patterns": [
-        { "match": "^;;.*Function.*$", "name": "markup.heading.level1.gcc.rtl" },
-        { "match": "^;; (basic block|prev block|next block|pred|succ) .*$", "name": "markup.heading.level2.gcc.rtl" }
-      ]
-    },
-    "instructions": {
-      "patterns": [
-        {
-          "match": "\\((insn|jump_insn|call_insn|debug_insn)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)",
-          "captures": {
-            "1": { "name": "keyword.control.instruction.gcc.rtl" },
-            "2": { "name": "constant.numeric.uid.gcc.rtl" },
-            "3": { "name": "constant.numeric.prev.gcc.rtl" },
-            "4": { "name": "constant.numeric.next.gcc.rtl" }
-          }
+      "patterns":
+          [
+            {"include" : "#comments"},
+            {"include" : "#headers"},
+            {"include" : "#instructions"},
+            {"include" : "#instruction-names"},
+            {"include" : "#note-directives"},
+            {"include" : "#block-info"},
+            {"include" : "#paren-keywords"},
+            {"include" : "#instruction-patterns"},
+            {"include" : "#registers"},
+            {"include" : "#constants"},
+            {"include" : "#modes"},
+            {"include" : "#labels"},
+            {"include" : "#operands"},
+            {"include" : "#reg-flags"},
+            {"include" : "#attributes"},
+            {"include" : "#rtl-operators"},
+            {"include" : "#rtl-keywords"},
+            {"include" : "#strings"},
+            {"include" : "#expr-list-keyword"},
+            {"include" : "#numbers"}
+          ],
+      "repository": {
+        "comments": {
+          "patterns":
+              [
+                {
+                  "match" : ";;.*$",
+                  "name" : "comment.line.double-semicolon.gcc.rtl"
+                },
+                {"match" : ";.*$", "name" : "comment.line.semicolon.gcc.rtl"}
+              ]
         },
-        {
-          "match": "\\((note|barrier|code_label)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)",
-          "captures": {
-            "1": { "name": "keyword.control.instruction.gcc.rtl" },
-            "2": { "name": "constant.numeric.uid.gcc.rtl" },
-            "3": { "name": "constant.numeric.prev.gcc.rtl" },
-            "4": { "name": "constant.numeric.next.gcc.rtl" },
-            "5": { "name": "constant.numeric.block.gcc.rtl" }
-          }
+        "headers": {
+          "patterns":
+              [
+                {
+                  "match" : "^;;.*Function.*$",
+                  "name" : "markup.heading.level1.gcc.rtl"
+                },
+                {
+                  "match" :
+                      "^;; (basic block|prev block|next block|pred|succ) .*$",
+                  "name" : "markup.heading.level2.gcc.rtl"
+                }
+              ]
+        },
+        "instructions": {
+          "patterns":
+              [
+                {
+                  "match" :
+                      "\\((insn|jump_insn|call_insn|debug_insn)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)",
+                  "captures" : {
+                    "1" : {"name" : "keyword.control.instruction.gcc.rtl"},
+                    "2" : {"name" : "constant.numeric.uid.gcc.rtl"},
+                    "3" : {"name" : "constant.numeric.prev.gcc.rtl"},
+                    "4" : {"name" : "constant.numeric.next.gcc.rtl"}
+                  }
+                },
+                {
+                  "match" :
+                      "\\((note|barrier|code_label)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)",
+                  "captures" : {
+                    "1" : {"name" : "keyword.control.instruction.gcc.rtl"},
+                    "2" : {"name" : "constant.numeric.uid.gcc.rtl"},
+                    "3" : {"name" : "constant.numeric.prev.gcc.rtl"},
+                    "4" : {"name" : "constant.numeric.next.gcc.rtl"},
+                    "5" : {"name" : "constant.numeric.block.gcc.rtl"}
+                  }
+                }
+              ]
+        },
+        "note-directives": {
+          "patterns":
+              [
+                {
+                  "match" : "\\bNOTE_[A-Z0-9_]+\\b",
+                  "name" : "comment.block.debug.note.gcc.rtl"
+                },
+                {
+                  "match" : "\\b(UNSPEC_\\w+)\\b",
+                  "name" : "support.constant.unspec.gcc.rtl"
+                }
+              ]
+        },
+        "block-info": {
+          "patterns":
+              [
+                {
+                  "match" :
+                      "\\b(ENTRY|EXIT|FALLTHRU|RTL|REACHABLE|VISITED|MODIFIED|NEW|DFS_BACK)\\b",
+                  "name" : "keyword.reserved.gcc.rtl"
+                },
+                {
+                  "match" : "\\b(count|estimated|predicted|flags|discrim)\\s*:",
+                  "captures" : {"0" : {"name" : "variable.language.gcc.rtl"}}
+                },
+                {
+                  "match" : "\\b(maybe_hot|hot|cold)\\b",
+                  "name" : "variable.language.gcc.rtl"
+                }
+              ]
+        },
+        "paren-keywords": {
+          "patterns":
+              [
+                {
+                  "match" : "\\(\\s*(reg)\\b",
+                  "captures" :
+                      {"1" : {"name" : "keyword.rtl-construct.gcc.rtl"}}
+                },
+                {
+                  "match" : "\\(\\s*(const_int)\\b",
+                  "captures" :
+                      {"1" : {"name" : "keyword.rtl-construct.gcc.rtl"}}
+                },
+                {
+                  "match" : "\\(\\s*(const_double)\\b",
+                  "captures" :
+                      {"1" : {"name" : "keyword.rtl-construct.gcc.rtl"}}
+                },
+                {
+                  "match" : "\\(\\s*(const_vector)\\b",
+                  "captures" :
+                      {"1" : {"name" : "keyword.rtl-construct.gcc.rtl"}}
+                },
+                {
+                  "match" : "\\(\\s*(label_ref)\\b",
+                  "captures" :
+                      {"1" : {"name" : "keyword.rtl-construct.gcc.rtl"}}
+                },
+                {
+                  "match" : "\\(\\s*(symbol_ref)\\b",
+                  "captures" :
+                      {"1" : {"name" : "keyword.rtl-construct.gcc.rtl"}}
+                },
+                {
+                  "match" : "\\(\\s*(mem)\\b",
+                  "captures" :
+                      {"1" : {"name" : "keyword.rtl-construct.gcc.rtl"}}
+                },
+                {
+                  "match" : "\\(\\s*(set|use|clobber|call|unspec|parallel)\\b",
+                  "captures" :
+                      {"1" : {"name" : "keyword.rtl-statement.gcc.rtl"}}
+                }
+              ]
+        },
+        "registers": {
+          "patterns":
+              [
+                {
+                  "match" :
+                      "\\(reg(\\s*/[a-z]+)?:([A-Z0-9]+)\\s+(\\d+)(\\s+\\[[^\\]]+\\])?\\)",
+                  "captures" : {
+                    "1" : {"name" : "storage.modifier.flag.gcc.rtl"},
+                    "2" : {"name" : "storage.type.mode.gcc.rtl"},
+                    "3" : {"name" : "variable.parameter.register.gcc.rtl"},
+                    "4" : {"name" : "entity.name.tag.gcc.rtl"}
+                  }
+                },
+                {
+                  "match" : "\\(subreg:(\\w+)\\s+(\\d+)\\)",
+                  "captures" : {
+                    "1" : {"name" : "storage.type.mode.gcc.rtl"},
+                    "2" : {"name" : "constant.numeric.gcc.rtl"}
+                  }
+                }
+              ]
+        },
+        "constants": {
+          "patterns":
+              [
+                {
+                  "match" : "\\(const_int\\s+(-?\\d+)\\s*\\[([^\\]]+)\\]?\\)",
+                  "captures" : {
+                    "1" : {"name" : "constant.numeric.integer.gcc.rtl"},
+                    "2" : {"name" : "string.other.link.gcc.rtl"}
+                  }
+                },
+                {
+                  "match" : "\\(const_double\\s+([0-9a-fA-Fx.eE+-]+)\\)",
+                  "captures" :
+                      {"1" : {"name" : "constant.numeric.float.gcc.rtl"}}
+                },
+                {
+                  "match" : "\\(const_vector\\s+\\[([^\\]]+)\\]\\)",
+                  "captures" :
+                      {"1" : {"name" : "constant.numeric.vector.gcc.rtl"}}
+                },
+                {
+                  "match" : "\\(const\\s+([^)]+)\\)",
+                  "captures" : {"1" : {"name" : "constant.other.gcc.rtl"}}
+                }
+              ]
+        },
+        "modes": {
+          "match": ":[A-Z][A-Z0-9]*\\b",
+          "name": "support.type.machine-mode.gcc.rtl"
+        },
+        "labels": {
+          "patterns":
+              [
+                {
+                  "match" : "\\(code_label\\s+(\\d+)",
+                  "captures" : {"1" : {"name" : "entity.name.label.gcc.rtl"}}
+                },
+                {
+                  "match" : "\\(label_ref:?\\w*\\s+(\\d+)\\)",
+                  "captures" : {"1" : {"name" : "entity.name.label.gcc.rtl"}}
+                }
+              ]
+        },
+        "operands": {
+          "patterns":
+              [
+                {
+                  "match" :
+                      "\\[\\d+\\s+[a-zA-Z0-9_\\.\\[\\]\\(\\) ]+ S\\d+\\s+A\\d+\\]",
+                  "name" : "string.other.link.gcc.rtl"
+                },
+                {
+                  "match" : "\\(nil\\)",
+                  "name" : "constant.language.nil.gcc.rtl"
+                }
+              ]
+        },
+        "instruction-names": {
+          "match": "\\{\\*?[a-zA-Z0-9_\\.]+\\}",
+          "name": "entity.name.instruction.target.gcc.rtl"
+        },
+        "expr-list-keyword": {
+          "match": "\\b(expr_list|int_list)\\b",
+          "name": "keyword.control.expr-list.gcc.rtl"
+        },
+        "reg-flags": {
+          "match": "\\bREG_[A-Z0-9_]+\\b",
+          "name": "support.type.reg-flag.gcc.rtl"
+        },
+        "attributes": {
+          "match": "\\bTARGET_[A-Z0-9_]+\\b",
+          "name": "variable.other.constant.gcc.rtl"
+        },
+        "rtl-operators": {
+          "match":
+              "(^|[\\s\\(])(plus|minus|neg|mult|div|mod|udiv|umod|and|ior|xor|not|ashift|lshiftrt|ashiftrt|rotate|rotatert|smin|smax|umin|umax|sign_extend|zero_extend|truncate|float|fix|float_extend|float_truncate|saturate|saturating_truncate|fract_convert|sat_fract|unsigned_sat_fract|abs|sqrt|bswap|popcount|parity|clz|ctz|clrsb|ffs|fma|compare|strict_low_part|if_then_else)\\b",
+          "captures": {"2": {"name": "keyword.operator.arithmetic.gcc.rtl"}}
+        },
+        "rtl-keywords": {
+          "match":
+              "(^|[\\s\\(])(set|use|clobber|parallel|insn_list|sequence|const|const_int|const_double|const_vector|symbol_ref|label_ref|mem|reg|subreg|scratch|cc0|call|return|simple_return|eh_return|trap_if|asm_input|asm_operands|asm_output|unspec|unspec_volatile|addr_vec|addr_diff_vec|prefetch|attr|conditional|ordered|unordered|uneq|unge|ungt|unle|unlt|ltgt|eq|ne|gt|gtu|lt|ltu|ge|geu|le|leu|high|lo_sum|vec_merge|vec_select|vec_concat|vec_duplicate|vec_series|ss_plus|us_plus|ss_minus|ss_neg|us_neg|ss_abs|ss_ashift|us_ashift|us_minus|ss_truncate|us_truncate|cond|block|exact_div|widen_sum|widen_mult|dot_prod)\\b",
+          "captures": {"2": {"name": "keyword.other.gcc.rtl"}}
+        },
+        "strings": {
+          "match": "\"(?:[^\"\\\\]|\\\\.)*\"",
+          "name": "string.quoted.double.gcc.rtl"
+        },
+        "numbers": {
+          "patterns":
+              [
+                {
+                  "match" : "\\b-?\\d+\\b",
+                  "name" : "constant.numeric.integer.gcc.rtl"
+                },
+                {
+                  "match" : "\\b0x[0-9a-fA-F]+\\b",
+                  "name" : "constant.numeric.hex.gcc.rtl"
+                },
+                {
+                  "match" : "\\b-?\\d+\\.\\d+([eE][+-]?\\d+)?\\b",
+                  "name" : "constant.numeric.float.gcc.rtl"
+                }
+              ]
         }
-      ]
-    },
-    "note-directives": {
-      "patterns": [
-        {
-          "match": "\\b(NOTE_INSN_DELETED|NOTE_INSN_BASIC_BLOCK|NOTE_INSN_EH_REGION_BEG|NOTE_INSN_EH_REGION_END|NOTE_INSN_FUNCTION_BEG|NOTE_INSN_FUNCTION_END|NOTE_INSN_BLOCK_BEG|NOTE_INSN_BLOCK_END|NOTE_INSN_VAR_LOCATION|NOTE_INSN_CALL_ARG_LOCATION|NOTE_INSN_CFI|NOTE_INSN_CFI_WINDOW_SAVE)\\b",
-          "name": "support.constant.note-insn.gcc.rtl"
-        },
-        {
-          "match": "\\b(UNSPEC_\\w+)\\b",
-          "name": "support.constant.unspec.gcc.rtl"
-        }
-      ]
-    },
-    "block-info": {
-      "patterns": [
-        {
-          "match": "\\b(ENTRY|EXIT|FALLTHRU|RTL|REACHABLE|VISITED|MODIFIED|NEW|DFS_BACK)\\b",
-          "name": "keyword.reserved.gcc.rtl"
-        },
-        {
-          "match": "\\b(count|estimated|predicted|flags|discrim)\\s*:",
-          "captures": { "0": { "name": "variable.language.gcc.rtl" } }
-        },
-        {
-          "match": "\\b(maybe_hot|hot|cold)\\b",
-          "name": "variable.language.gcc.rtl"
-        }
-      ]
-    },
-    "paren-keywords": {
-      "patterns": [
-        {
-          "match": "\\(\\s*(reg)\\b",
-          "captures": { "1": { "name": "keyword.rtl-construct.gcc.rtl" } }
-        },
-        {
-          "match": "\\(\\s*(const_int)\\b",
-          "captures": { "1": { "name": "keyword.rtl-construct.gcc.rtl" } }
-        },
-        {
-          "match": "\\(\\s*(const_double)\\b",
-          "captures": { "1": { "name": "keyword.rtl-construct.gcc.rtl" } }
-        },
-        {
-          "match": "\\(\\s*(const_vector)\\b",
-          "captures": { "1": { "name": "keyword.rtl-construct.gcc.rtl" } }
-        },
-        {
-          "match": "\\(\\s*(label_ref)\\b",
-          "captures": { "1": { "name": "keyword.rtl-construct.gcc.rtl" } }
-        },
-        {
-          "match": "\\(\\s*(symbol_ref)\\b",
-          "captures": { "1": { "name": "keyword.rtl-construct.gcc.rtl" } }
-        },
-        {
-          "match": "\\(\\s*(mem)\\b",
-          "captures": { "1": { "name": "keyword.rtl-construct.gcc.rtl" } }
-        },
-        {
-          "match": "\\(\\s*(set|use|clobber|call|unspec|parallel)\\b",
-          "captures": { "1": { "name": "keyword.rtl-statement.gcc.rtl" } }
-        }
-      ]
-    },
-    "registers": {
-      "patterns": [
-        {
-          "match": "\\(reg(\\s*/[a-z]+)?:([A-Z0-9]+)\\s+(\\d+)(\\s+\\[[^\\]]+\\])?\\)",
-          "captures": {
-            "1": { "name": "storage.modifier.flag.gcc.rtl" },
-            "2": { "name": "storage.type.mode.gcc.rtl" },
-            "3": { "name": "variable.parameter.register.gcc.rtl" },
-            "4": { "name": "entity.name.tag.gcc.rtl" }
-          }
-        },
-        {
-          "match": "\\(subreg:(\\w+)\\s+(\\d+)\\)",
-          "captures": {
-            "1": { "name": "storage.type.mode.gcc.rtl" },
-            "2": { "name": "constant.numeric.gcc.rtl" }
-          }
-        }
-      ]
-    },
-    "constants": {
-      "patterns": [
-        {
-          "match": "\\(const_int\\s+(-?\\d+)\\s*\\[([^\\]]+)\\]?\\)",
-          "captures": {
-            "1": { "name": "constant.numeric.integer.gcc.rtl" },
-            "2": { "name": "string.other.link.gcc.rtl" }
-          }
-        },
-        {
-          "match": "\\(const_double\\s+([0-9a-fA-Fx.eE+-]+)\\)",
-          "captures": { "1": { "name": "constant.numeric.float.gcc.rtl" } }
-        },
-        {
-          "match": "\\(const_vector\\s+\\[([^\\]]+)\\]\\)",
-          "captures": { "1": { "name": "constant.numeric.vector.gcc.rtl" } }
-        },
-        {
-          "match": "\\(const\\s+([^)]+)\\)",
-          "captures": { "1": { "name": "constant.other.gcc.rtl" } }
-        }
-      ]
-    },
-    "modes": {
-      "match": "(?<=reg|subreg|mem|compare|plus|minus|mult|div|and|ior|xor|ashift|lshiftrt|ashiftrt|rotate|rotatert|sign_extend|zero_extend|truncate|float|fix|neg|abs|sqrt|bswap|popcount|parity|clz|ctz|clrsb|ffs|fma|vec_|unspec|label_ref):[A-Z][A-Z0-9]*",
-      "name": "storage.type.mode.gcc.rtl"
-    },
-    "labels": {
-      "patterns": [
-        {
-          "match": "\\(code_label\\s+(\\d+)",
-          "captures": { "1": { "name": "entity.name.label.gcc.rtl" } }
-        },
-        {
-          "match": "\\(label_ref:?\\w*\\s+(\\d+)\\)",
-          "captures": { "1": { "name": "entity.name.label.gcc.rtl" } }
-        }
-      ]
-    },
-    "operands": {
-      "patterns": [
-        {
-          "match": "\\[\\d+\\s+[a-zA-Z0-9_\\.\\[\\]\\(\\) ]+ S\\d+\\s+A\\d+\\]",
-          "name": "string.other.link.gcc.rtl"
-        },
-        {
-          "match": "\\(int_list:\\w+\\s+\\d+\\s+\\(nil\\)\\)",
-          "name": "meta.structure.gcc.rtl"
-        },
-        {
-          "match": "\\(nil\\)",
-          "name": "constant.language.nil.gcc.rtl"
-        }
-      ]
-    },
-    "instruction-names": {
-      "match": "\\{\\*?([a-zA-Z0-9_]+)\\}",
-      "captures": {
-        "1": { "name": "entity.name.function.instruction.gcc.rtl" }
       }
-    },
-    "instruction-patterns": {
-      "match": "\\b(movdi_aarch64|movsi_aarch64|cmpsi|cmpdi|condjump|maddsidi4|addsi3_aarch64|adddi3_aarch64)\\b",
-      "name": "entity.name.function.instruction.gcc.rtl"
-    },
-    "attributes": {
-      "match": "\\b(REG_\\w+|TARGET_\\w+|HOST_WIDE_\\w+)\\b",
-      "name": "variable.other.constant.gcc.rtl"
-    },
-    "rtl-operators": {
-      "match": "\\b(plus|minus|neg|mult|div|mod|udiv|umod|and|ior|xor|not|ashift|lshiftrt|ashiftrt|rotate|rotatert|smin|smax|umin|umax|sign_extend|zero_extend|truncate|float|fix|float_extend|float_truncate|saturate|saturating_truncate|fract_convert|sat_fract|unsigned_sat_fract|abs|sqrt|bswap|popcount|parity|clz|ctz|clrsb|ffs|fma|compare|strict_low_part|if_then_else)\\b",
-      "name": "keyword.operator.arithmetic.gcc.rtl"
-    },
-    "rtl-keywords": {
-      "match": "\\b(set|use|clobber|parallel|expr_list|insn_list|sequence|const|const_int|const_double|const_vector|symbol_ref|label_ref|mem|reg|subreg|scratch|cc0|call|return|simple_return|eh_return|trap_if|asm_input|asm_operands|asm_output|unspec|unspec_volatile|addr_vec|addr_diff_vec|prefetch|attr|set_attr|set_attr_alternative|define_attr|define_insn|define_insn_and_split|define_peephole2|define_expand|define_split|define_mode_attr|define_mode_iterator|define_mode_condition_code|define_int_iterator|define_special_predicate|define_predicate|define_memory_constraint|define_address_constraint|define_constraint|define_relaxed_memory_constraint|define_code_attr|define_code_iterator|define_subst|define_subst_attr|match_operand|match_scratch|match_operator|match_parallel|match_test|match_dup|match_code|define_rtl_iter|define_register_constraint|define_special_constraint|define_code_macro|define_mode_macro|define_code_iterator|define_insn_and_rewrite|define_insn_and_move_insn|conditional|ordered|unordered|uneq|unge|ungt|unle|unlt|ltgt|eq|ne|gt|gtu|lt|ltu|ge|geu|le|leu|high|lo_sum|vec_merge|vec_select|vec_concat|vec_duplicate|vec_series|ss_plus|us_plus|ss_minus|ss_neg|us_neg|ss_abs|ss_ashift|us_ashift|us_minus|ss_truncate|us_truncate|cond|block|exact_div|widen_sum|widen_mult|dot_prod)\\b",
-      "name": "keyword.other.gcc.rtl"
-    },
-    "strings": {
-      "match": "\"(?:[^\"\\\\]|\\\\.)*\"",
-      "name": "string.quoted.double.gcc.rtl"
-    },
-    "numbers": {
-      "patterns": [
-        {
-          "match": "\\b-?\\d+\\b",
-          "name": "constant.numeric.integer.gcc.rtl"
-        },
-        {
-          "match": "\\b0x[0-9a-fA-F]+\\b",
-          "name": "constant.numeric.hex.gcc.rtl"
-        },
-        {
-          "match": "\\b-?\\d+\\.\\d+([eE][+-]?\\d+)?\\b",
-          "name": "constant.numeric.float.gcc.rtl"
-        }
-      ]
-    }
-  }
 }

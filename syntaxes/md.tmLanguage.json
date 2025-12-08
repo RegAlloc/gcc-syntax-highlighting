@@ -1,323 +1,313 @@
 {
-	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-	"name": "gcc-md",
-	"patterns": [
-		{
-			"include": "#comments"
-		},
-		{
-			"include": "#cpp-blocks"
-		},
-		{
-			"include": "#strings"
-		},
-		{
-			"include": "#numbers"
-		},
-		{
-			"include": "#primary-keywords"
-		},
-		{
-			"include": "#rtl-keywords"
-		},
-		{
-			"include": "#special-keywords"
-		},
-		{
-			"include": "#general-keywords"
-		},
-		{
-			"include": "#symbols"
-		},
-		{
-			"include": "#expressions"
-		}
-	],
-	"fileTypes": ["md"],
-	"repository": {
-		"comments": {
-			"patterns": [
-				{
-					"comment": "double semicolon comments",
-					"name": "comment.line.double-semicolon.gcc-md",
-					"match": ";;.*$"
-				},
-				{
-					"comment": "single semicolon comments",
-					"name": "comment.line.semicolon.gcc-md",
-					"match": ";(?!;).*$"
-				}
-			]
-		},
-		"strings": {
-			"patterns": [
-				{
-					"name": "string.quoted.double.gcc-md",
-					"begin": "\"",
-					"end": "\"",
-					"patterns": [
-						{
-							"name": "constant.character.escape.gcc-md",
-							"match": "\\\\."
-						}
-					]
-				}
-			]
-		},
-		"cpp-blocks": {
-			"patterns": [
-				{
-					"name": "meta.embedded.cpp.gcc-md",
-					"begin": "\\{",
-					"end": "\\}",
-					"beginCaptures": { "0": { "name": "punctuation.section.block.begin.bracket.curly.cpp" } },
-					"endCaptures": { "0": { "name": "punctuation.section.block.end.bracket.curly.cpp" } },
-					"patterns": [
-						{
-							"name": "string.quoted.double.cpp",
-							"match": "\"(?:[^\"\\\\]|\\\\.)*\"",
-							"captures": {
-								"0": { "name": "string.quoted.double.cpp" }
-							}
-						},
-						{
-							"name": "string.quoted.single.cpp",
-							"begin": "'",
-							"end": "'",
-							"beginCaptures": { "0": { "name": "punctuation.definition.string.begin.cpp" } },
-							"endCaptures": { "0": { "name": "punctuation.definition.string.end.cpp" } },
-							"patterns": [
-								{
-									"name": "constant.character.escape.cpp",
-									"match": "\\\\."
-								}
-							]
-						},
-						{
-							"name": "comment.line.double-slash.cpp",
-							"match": "//[^\\n]*"
-						},
-						{
-							"name": "comment.block.cpp",
-							"begin": "/\\*",
-							"end": "\\*/"
-						},
-						{
-							"include": "#cpp-blocks"
-						},
-						{
-							"name": "keyword.control.cpp",
-							"match": "\\b(if|else|while|for|do|switch|case|default|break|continue|return|goto|try|catch|throw|using|namespace|inline|DONE|FAIL)\\b"
-						},
-						{
-							"name": "storage.type.cpp",
-							"match": "\\b(rtx|int|float|double|char|void|bool|long|short|unsigned|signed|auto|const|volatile|static|register|extern|typedef|struct|class|union|enum)\\b"
-						},
-						{
-							"name": "constant.language.cpp",
-							"match": "\\b(true|false|NULL|nullptr)\\b"
-						},
-						{
-							"name": "storage.type.mode.cpp",
-							"match": "\\b([A-Z][A-Z]*mode)\\b"
-						},
-						{
-							"name": "variable.language.cpp",
-							"match": "\\boperands\\s*\\["
-						},
-						{
-							"name": "keyword.operator.cpp",
-							"match": "(->|::|\\.\\.\\.|<<|>>|<=|>=|==|!=|&&|\\|\\|)"
-						},
-						{
-							"name": "constant.numeric.hex.cpp",
-							"match": "0[xX][0-9a-fA-F]+[uUlL]*"
-						},
-						{
-							"name": "constant.numeric.float.cpp",
-							"match": "([0-9]*\\.[0-9]+|[0-9]+\\.)([eE][+-]?[0-9]+)?[fFdD]?"
-						},
-						{
-							"name": "constant.numeric.integer.cpp",
-							"match": "[0-9]+[uUlL]*"
-						},
-						{
-							"name": "variable.other.constant.cpp",
-							"match": "\\b(TARGET_[A-Z0-9_]+)\\b"
-						},
-						{
-							"name": "variable.other.constant.cpp",
-							"match": "\\b(HOST_WIDE_[A-Z0-9_]+)\\b"
-						},
-						{
-							"name": "entity.name.function.cpp",
-							"match": "([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()"
-						},
-						{
-							"name": "variable.other.cpp",
-							"match": "[a-zA-Z_][a-zA-Z0-9_]*"
-						},
-						{
-							"name": "punctuation.separator.cpp",
-							"match": "[;,.]"
-						}
-					]
-				}
-			]
-		},
-		"numbers": {
-			"patterns": [
-				{
-					"comment": "hex numbers",
-					"name": "constant.numeric.hex.gcc-md",
-					"match": "0[xX][0-9a-fA-F]+"
-				},
-				{
-					"comment": "float numbers",
-					"name": "constant.numeric.float.gcc-md",
-					"match": "-?\\b[0-9]+\\.[0-9]+([eE][+-]?[0-9]+)?\\b"
-				},
-				{
-					"comment": "integer numbers",
-					"name": "constant.numeric.integer.gcc-md",
-					"match": "-?\\b[0-9]+\\b"
-				}
-			]
-		},
-		"symbols": {
-			"patterns": [
-				{
-					"comment": "uppercase constants/macros",
-					"name": "constant.other.macro.gcc-md",
-					"match": "\\b[A-Z][A-Z0-9_]*\\b"
-				},
-				{
-					"comment": "identifiers",
-					"name": "variable.other.gcc-md",
-					"match": "\\b[a-z_][a-zA-Z0-9_]*\\b"
-				}
-			]
-		},
-		"primary-keywords": {
-			"patterns": [
-				{
-					"comment": "define_insn - primary instruction definition",
-					"name": "keyword.control.define.insn.gcc-md",
-					"match": "\\b(define_insn)\\b"
-				},
-				{
-					"comment": "define_insn_and_split - instruction with split pattern",
-					"name": "keyword.control.define.insn-split.gcc-md",
-					"match": "\\b(define_insn_and_split)\\b"
-				},
-				{
-					"comment": "define_split - pattern splitting",
-					"name": "keyword.control.define.split.gcc-md",
-					"match": "\\b(define_split)\\b"
-				},
-				{
-					"comment": "define_expand - macro expansion",
-					"name": "keyword.control.define.expand.gcc-md",
-					"match": "\\b(define_expand)\\b"
-				},
-				{
-					"comment": "define_peephole/peephole2 - optimizations",
-					"name": "keyword.control.define.peephole.gcc-md",
-					"match": "\\b(define_peephole|define_peephole2)\\b"
-				}
-			]
-		},
-		"rtl-keywords": {
-			"patterns": [
-				{
-					"comment": "RTL data modifiers - HIGH PRIORITY",
-					"name": "keyword.control.rtl-modifier.gcc-md",
-					"match": "\\b(clobber|use|set_attr|set)\\b"
-				},
-				{
-					"comment": "RTL operations and constructs",
-					"name": "keyword.operator.rtl.gcc-md",
-					"match": "\\b(parallel|const_int|const_string|const_double|const_vector|symbol_ref|label_ref|reg|mem|vec_select|vec_concat|concat|subreg|strict_low_part|high|lo_sum)\\b"
-				},
-				{
-					"comment": "RTL arithmetic operations",
-					"name": "keyword.operator.arithmetic.gcc-md",
-					"match": "\\b(plus|minus|neg|mult|div|mod|udiv|umod|ss_mult|us_mult|abs|sqrt|fma|compare)\\b"
-				},
-				{
-					"comment": "RTL bitwise operations",
-					"name": "keyword.operator.bitwise.gcc-md",
-					"match": "\\b(and|ior|xor|not|ashift|rotate|ashiftrt|lshiftrt|rotatert|lshift|rshift)\\b"
-				},
-				{
-					"comment": "RTL logical operations",
-					"name": "keyword.operator.logical.gcc-md",
-					"match": "\\b(eq|ne|lt|le|gt|ge|ltu|leu|gtu|geu|unordered|ordered|uneq|unge|ungt|unle|unlt|ltgt)\\b"
-				}
-			]
-		},
-		"special-keywords": {
-			"patterns": [
-				{
-					"comment": "match forms - operand matching",
-					"name": "entity.name.function.match.gcc-md",
-					"match": "\\b(match_operand|match_scratch|match_dup|match_operator|match_op_dup|match_parallel|match_par_dup)\\b"
-				},
-				{
-					"comment": "attribute definitions",
-					"name": "keyword.control.define.attribute.gcc-md",
-					"match": "\\b(define_attr|define_asm_attributes|define_mode_iterator|define_mode_attr|define_int_iterator|define_int_attr|define_code_iterator|define_code_attr)\\b"
-				},
-				{
-					"comment": "constants and enumerations",
-					"name": "keyword.control.define.enum.gcc-md",
-					"match": "\\b(define_c_enum|define_constants|define_enum)\\b"
-				},
-				{
-					"comment": "scheduling and reservation",
-					"name": "keyword.control.define.schedule.gcc-md",
-					"match": "\\b(define_insn_reservation|define_automaton|define_cpu_unit|define_query_cpu_unit|define_bypass|define_function_unit)\\b"
-				}
-			]
-		},
-		"general-keywords": {
-			"patterns": [
-				{
-					"comment": "control flow and conditionals",
-					"name": "keyword.control.gcc-md",
-					"match": "\\b(if_then_else|cond|return|call|eq_attr|attr_flag|include)\\b"
-				},
-				{
-					"comment": "type and mode modifiers",
-					"name": "storage.type.mode.gcc-md",
-					"match": "\\b(float_extend|float_truncate|sign_extend|zero_extend|truncate|float|fix|unsigned_float|unsigned_fix|zero_extract)\\b"
-				},
-				{
-					"comment": "predicate functions",
-					"name": "entity.name.function.predicate.gcc-md",
-					"match": "\\b(gpc_reg_operand|indexed_address_mem|update_address_mem|reg_or_short_operand|reg_or_u5_operand|memory_operand)\\b"
-				}
-			]
-		},
-		"expressions": { 
-			"name": "meta.block.gcc-md",
-			"begin": "\\(",
-			"end": "\\)",
-			"beginCaptures": { "0": { "name": "punctuation.section.parameters.begin.bracket.round.gcc-md" } },
-			"endCaptures": { "0": { "name": "punctuation.section.parameters.end.bracket.round.gcc-md" } },
-			"patterns": [
-				{ "include": "$self" },
-				{ "include": "#comments" },
-				{ "include": "#strings" },
-				{ "include": "#cpp-blocks" },
-				{ "include": "#numbers" },
-				{ "include": "#primary-keywords" },
-				{ "include": "#rtl-keywords" },
-				{ "include": "#special-keywords" },
-				{ "include": "#general-keywords" },
-				{ "include": "#symbols" }
-			]
-		}
-	},
-	"scopeName": "source.gcc.md"
+  "$schema":
+      "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+      "name": "gcc-md",
+      "patterns":
+          [
+            {"include" : "#comments"}, {"include" : "#cpp-blocks"},
+            {"include" : "#strings"}, {"include" : "#numbers"},
+            {"include" : "#primary-keywords"}, {"include" : "#rtl-keywords"},
+            {"include" : "#special-keywords"},
+            {"include" : "#general-keywords"}, {"include" : "#symbols"},
+            {"include" : "#expressions"}
+          ],
+      "fileTypes": [ "md" ], "repository": {
+        "comments": {
+          "patterns":
+              [
+                {
+                  "comment" : "double semicolon comments",
+                  "name" : "comment.line.double-semicolon.gcc-md",
+                  "match" : ";;.*$"
+                },
+                {
+                  "comment" : "single semicolon comments",
+                  "name" : "comment.line.semicolon.gcc-md",
+                  "match" : ";(?!;).*$"
+                }
+              ]
+        },
+        "strings": {
+          "patterns": [ {
+            "name" : "string.quoted.double.gcc-md",
+            "begin" : "\"",
+            "end" : "\"",
+            "patterns" : [
+              {"name" : "constant.character.escape.gcc-md", "match" : "\\\\."}
+            ]
+          } ]
+        },
+        "cpp-blocks": {
+          "patterns": [ {
+            "name" : "meta.embedded.cpp.gcc-md",
+            "begin" : "\\{",
+            "end" : "\\}",
+            "beginCaptures" : {
+              "0" :
+                  {"name" : "punctuation.section.block.begin.bracket.curly.cpp"}
+            },
+            "endCaptures" : {
+              "0" : {"name" : "punctuation.section.block.end.bracket.curly.cpp"}
+            },
+            "patterns" : [
+              {
+                "name" : "string.quoted.double.cpp",
+                "match" : "\"(?:[^\"\\\\]|\\\\.)*\"",
+                "captures" : {"0" : {"name" : "string.quoted.double.cpp"}}
+              },
+              {
+                "name" : "string.quoted.single.cpp",
+                "begin" : "'",
+                "end" : "'",
+                "beginCaptures" : {
+                  "0" : {"name" : "punctuation.definition.string.begin.cpp"}
+                },
+                "endCaptures" :
+                    {"0" : {"name" : "punctuation.definition.string.end.cpp"}},
+                "patterns" : [
+                  {"name" : "constant.character.escape.cpp", "match" : "\\\\."}
+                ]
+              },
+              {"name" : "comment.line.double-slash.cpp", "match" : "//[^\\n]*"},
+              {"name" : "comment.block.cpp", "begin" : "/\\*", "end" : "\\*/"},
+              {"include" : "#cpp-blocks"}, {
+                "name" : "keyword.control.cpp",
+                "match" :
+                    "\\b(if|else|while|for|do|switch|case|default|break|continue|return|goto|try|catch|throw|using|namespace|inline|DONE|FAIL)\\b"
+              },
+              {
+                "name" : "storage.type.cpp",
+                "match" :
+                    "\\b(rtx|int|float|double|char|void|bool|long|short|unsigned|signed|auto|const|volatile|static|register|extern|typedef|struct|class|union|enum)\\b"
+              },
+              {
+                "name" : "constant.language.cpp",
+                "match" : "\\b(true|false|NULL|nullptr)\\b"
+              },
+              {
+                "name" : "storage.type.mode.cpp",
+                "match" : "\\b([A-Z][A-Z]*mode)\\b"
+              },
+              {
+                "name" : "variable.language.cpp",
+                "match" : "\\boperands\\s*\\["
+              },
+              {
+                "name" : "keyword.operator.cpp",
+                "match" : "(->|::|\\.\\.\\.|<<|>>|<=|>=|==|!=|&&|\\|\\|)"
+              },
+              {
+                "name" : "constant.numeric.hex.cpp",
+                "match" : "0[xX][0-9a-fA-F]+[uUlL]*"
+              },
+              {
+                "name" : "constant.numeric.float.cpp",
+                "match" : "([0-9]*\\.[0-9]+|[0-9]+\\.)([eE][+-]?[0-9]+)?[fFdD]?"
+              },
+              {
+                "name" : "constant.numeric.integer.cpp",
+                "match" : "[0-9]+[uUlL]*"
+              },
+              {
+                "name" : "variable.other.constant.cpp",
+                "match" : "\\b(TARGET_[A-Z0-9_]+)\\b"
+              },
+              {
+                "name" : "variable.other.constant.cpp",
+                "match" : "\\b(HOST_WIDE_[A-Z0-9_]+)\\b"
+              },
+              {
+                "name" : "entity.name.function.cpp",
+                "match" : "([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()"
+              },
+              {
+                "name" : "variable.other.cpp",
+                "match" : "[a-zA-Z_][a-zA-Z0-9_]*"
+              },
+              {"name" : "punctuation.separator.cpp", "match" : "[;,.]"}
+            ]
+          } ]
+        },
+        "numbers": {
+          "patterns":
+              [
+                {
+                  "comment" : "hex numbers",
+                  "name" : "constant.numeric.hex.gcc-md",
+                  "match" : "0[xX][0-9a-fA-F]+"
+                },
+                {
+                  "comment" : "float numbers",
+                  "name" : "constant.numeric.float.gcc-md",
+                  "match" : "-?\\b[0-9]+\\.[0-9]+([eE][+-]?[0-9]+)?\\b"
+                },
+                {
+                  "comment" : "integer numbers",
+                  "name" : "constant.numeric.integer.gcc-md",
+                  "match" : "-?\\b[0-9]+\\b"
+                }
+              ]
+        },
+        "symbols": {
+          "patterns":
+              [
+                {
+                  "comment" : "uppercase constants/macros",
+                  "name" : "constant.other.macro.gcc-md",
+                  "match" : "\\b[A-Z][A-Z0-9_]*\\b"
+                },
+                {
+                  "comment" : "identifiers",
+                  "name" : "variable.other.gcc-md",
+                  "match" : "\\b[a-z_][a-zA-Z0-9_]*\\b"
+                }
+              ]
+        },
+        "primary-keywords": {
+          "patterns":
+              [
+                {
+                  "comment" : "define_insn - primary instruction definition",
+                  "name" : "keyword.control.define.insn.gcc-md",
+                  "match" : "\\b(define_insn)\\b"
+                },
+                {
+                  "comment" :
+                      "define_insn_and_split - instruction with split pattern",
+                  "name" : "keyword.control.define.insn-split.gcc-md",
+                  "match" : "\\b(define_insn_and_split)\\b"
+                },
+                {
+                  "comment" : "define_split - pattern splitting",
+                  "name" : "keyword.control.define.split.gcc-md",
+                  "match" : "\\b(define_split)\\b"
+                },
+                {
+                  "comment" : "define_expand - macro expansion",
+                  "name" : "keyword.control.define.expand.gcc-md",
+                  "match" : "\\b(define_expand)\\b"
+                },
+                {
+                  "comment" : "define_peephole/peephole2 - optimizations",
+                  "name" : "keyword.control.define.peephole.gcc-md",
+                  "match" : "\\b(define_peephole|define_peephole2)\\b"
+                }
+              ]
+        },
+        "rtl-keywords":
+            {
+              "patterns":
+                  [
+                    {
+                      "comment" : "RTL data modifiers - HIGH PRIORITY",
+                      "name" : "keyword.control.rtl-modifier.gcc-md",
+                      "match" : "\\b(clobber|use|set_attr|set)\\b"
+                    },
+                    {
+                      "comment" : "RTL operations and constructs",
+                      "name" : "keyword.operator.rtl.gcc-md",
+                      "match" :
+                          "\\b(parallel|const_int|const_string|const_double|const_vector|symbol_ref|label_ref|reg|mem|vec_select|vec_concat|concat|subreg|strict_low_part|high|lo_sum)\\b"
+                    },
+                    {
+                      "comment" : "RTL arithmetic operations",
+                      "name" : "keyword.operator.arithmetic.gcc-md",
+                      "match" :
+                          "\\b(plus|minus|neg|mult|div|mod|udiv|umod|ss_mult|us_mult|abs|sqrt|fma|compare)\\b"
+                    },
+                    {
+                      "comment" : "RTL bitwise operations",
+                      "name" : "keyword.operator.bitwise.gcc-md",
+                      "match" :
+                          "\\b(and|ior|xor|not|ashift|rotate|ashiftrt|lshiftrt|rotatert|lshift|rshift)\\b"
+                    },
+                    {
+                      "comment" : "RTL logical operations",
+                      "name" : "keyword.operator.logical.gcc-md",
+                      "match" :
+                          "\\b(eq|ne|lt|le|gt|ge|ltu|leu|gtu|geu|unordered|ordered|uneq|unge|ungt|unle|unlt|ltgt)\\b"
+                    }
+                  ]
+            },
+        "special-keywords":
+            {
+              "patterns":
+                  [
+                    {
+                      "comment" : "match forms - operand matching",
+                      "name" : "entity.name.function.match.gcc-md",
+                      "match" :
+                          "\\b(match_operand|match_scratch|match_dup|match_operator|match_op_dup|match_parallel|match_par_dup)\\b"
+                    },
+                    {
+                      "comment" : "attribute definitions",
+                      "name" : "keyword.control.define.attribute.gcc-md",
+                      "match" :
+                          "\\b(define_attr|define_asm_attributes|define_mode_iterator|define_mode_attr|define_int_iterator|define_int_attr|define_code_iterator|define_code_attr)\\b"
+                    },
+                    {
+                      "comment" : "constants and enumerations",
+                      "name" : "keyword.control.define.enum.gcc-md",
+                      "match" :
+                          "\\b(define_c_enum|define_constants|define_enum)\\b"
+                    },
+                    {
+                      "comment" : "scheduling and reservation",
+                      "name" : "keyword.control.define.schedule.gcc-md",
+                      "match" :
+                          "\\b(define_insn_reservation|define_automaton|define_cpu_unit|define_query_cpu_unit|define_bypass|define_function_unit)\\b"
+                    }
+                  ]
+            },
+        "general-keywords":
+            {
+              "patterns":
+                  [
+                    {
+                      "comment" : "control flow and conditionals",
+                      "name" : "keyword.control.gcc-md",
+                      "match" :
+                          "\\b(if_then_else|cond|return|call|eq_attr|attr_flag|include)\\b"
+                    },
+                    {
+                      "comment" : "type and mode modifiers",
+                      "name" : "storage.type.mode.gcc-md",
+                      "match" :
+                          "\\b(float_extend|float_truncate|sign_extend|zero_extend|truncate|float|fix|unsigned_float|unsigned_fix|zero_extract)\\b"
+                    },
+                    {
+                      "comment" : "predicate functions",
+                      "name" : "entity.name.function.predicate.gcc-md",
+                      "match" :
+                          "\\b(gpc_reg_operand|indexed_address_mem|update_address_mem|reg_or_short_operand|reg_or_u5_operand|memory_operand)\\b"
+                    }
+                  ]
+            },
+        "expressions": {
+          "name": "meta.block.gcc-md",
+          "begin": "\\(",
+          "end": "\\)",
+          "beginCaptures": {
+            "0": {
+              "name":
+                  "punctuation.section.parameters.begin.bracket.round.gcc-md"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.parameters.end.bracket.round.gcc-md"
+            }
+          },
+          "patterns":
+              [
+                {"include" : "$self"}, {"include" : "#comments"},
+                {"include" : "#strings"}, {"include" : "#cpp-blocks"},
+                {"include" : "#numbers"}, {"include" : "#primary-keywords"},
+                {"include" : "#rtl-keywords"},
+                {"include" : "#special-keywords"},
+                {"include" : "#general-keywords"}, {"include" : "#symbols"}
+              ]
+        }
+      },
+      "scopeName": "source.gcc.md"
 }
