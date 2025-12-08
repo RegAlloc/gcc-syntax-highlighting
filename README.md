@@ -52,3 +52,6 @@ In short, this repo is useful any time you are:
 
 ### GCC Machine Description
 ![GCC Machine Description](pictures/GCC-Machine-Description.png)
+
+### GCC RTL dumps
+![GCC RTL Dump](pictures/RTL.mov)
