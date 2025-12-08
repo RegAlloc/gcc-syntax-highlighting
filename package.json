@@ -5,6 +5,10 @@
   "version": "0.1.0",
   "publisher": "RegAlloc",
   "icon": "icon/gcc.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RegAlloc/gcc-syntax-highlighting/"
+  },
   "keywords": [
   "gcc", "gnu",
   "rtl",
