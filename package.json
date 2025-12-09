@@ -2,7 +2,7 @@
   "name": "gcc-syntax-highlighting",
   "displayName": "GCC Syntax Highlighting Toolkit (RTL, GIMPLE & MD)",
   "description": "Syntax highlighting for GCC RTL, Gimple, Match.pd, and Machine Description files",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "RegAlloc",
   "icon": "pictures/gcc.png",
   "repository": {
@@ -29,7 +29,7 @@
     "toolchain"
   ],
   "engines": {
-    "vscode": "^1.106.1"
+    "vscode": "^1.70.0"
   },
   "categories": [
     "Programming Languages"

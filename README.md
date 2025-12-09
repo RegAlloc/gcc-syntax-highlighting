@@ -1,6 +1,6 @@
 # GCC Syntax Highlighting – GCC internals in color
 
-**Extension version:** 0.0.1
+**Extension version:** 0.1.2
 
 This repository contains a Visual Studio Code / VSCodium extension that adds syntax highlighting for **GCC internals**.
 It is aimed at people working on GCC itself or regularly reading GCC dumps.
