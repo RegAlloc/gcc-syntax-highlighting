@@ -1,5 +1,13 @@
 # Changelog
 
+2025-12-11  Kishan Parmar  <kparmar2101@gmail.com>
+
+	Consider t-* files as Makefile
+
+2025-12-11  Kishan Parmar  <kparmar2101@gmail.com>
+
+	0.1.3
+
 2025-12-09  Kishan Parmar  <kparmar2101@gmail.com>
 
 	Downgrade vscode engine version
