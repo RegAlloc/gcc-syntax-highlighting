@@ -1,5 +1,9 @@
 # Changelog
 
+2025-12-12  Kishan Parmar  <kparmar2101@gmail.com>
+
+	Add support for RS6000 builtins
+
 2025-12-11  Kishan Parmar  <kparmar2101@gmail.com>
 
 	Consider t-* files as Makefile

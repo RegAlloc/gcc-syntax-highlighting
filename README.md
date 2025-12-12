@@ -1,6 +1,6 @@
 # GCC Syntax Highlighting – GCC internals in color
 
-**Extension version:** 0.1.2
+**Extension version:** 0.1.4
 
 This repository contains a Visual Studio Code / VSCodium extension that adds syntax highlighting for **GCC internals**.
 It is aimed at people working on GCC itself or regularly reading GCC dumps.
@@ -38,6 +38,7 @@ Reading all of this as plain, uncolored text is painful. This extension provides
 - Color **RTL** dumps (instruction kinds, UIDs, registers, modes, constants, and common RTL operators).
 - Color **GIMPLE** dumps (basic blocks, common statement kinds, PHIs, SSA names, constants, and control-flow keywords).
 - Color **`match.pd`** (pattern headers, operators, captures, preprocessor lines, and C/C++ action blocks).
+- Color **6000-builtins file**
 
 In short, this repo is useful any time you are:
 

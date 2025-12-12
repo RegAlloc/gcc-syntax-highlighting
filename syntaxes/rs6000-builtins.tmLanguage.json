@@ -1,0 +1,132 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "GCC RS6000 Builtins",
+  "scopeName": "source.gcc.rs6000",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#stanza-headers"
+    },
+    {
+      "include": "#attribute-lines"
+    },
+    {
+      "include": "#prototype-lines"
+    },
+    {
+      "include": "#general-keywords"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "match": ";.*$",
+          "name": "comment.line.semicolon.gcc.rs6000"
+        }
+      ]
+    },
+    "stanza-headers": {
+      "match": "^\\[([a-zA-Z0-9_]+)\\]",
+      "captures": {
+        "0": {
+          "name": "meta.tag.stanza.gcc.rs6000"
+        },
+        "1": {
+          "name": "entity.name.section.gcc.rs6000"
+        }
+      }
+    },
+    "general-keywords": {
+      "patterns": [
+        {
+          "match": "\\b(const|signed|unsigned|void|bool|char|short|int|long|float|double|string|_Float128|__int128|__ibm128|_Decimal32|_Decimal64|_Decimal128)\\b",
+          "name": "storage.type.gcc.rs6000"
+        },
+        {
+          "match": "\\b(vsc|vuc|vbc|vss|vus|vbs|vsi|vui|vbi|vsll|vull|vbll|vsq|vuq|vbq|vp|vf|vd|v256|v512)\\b",
+          "name": "storage.type.vector.gcc.rs6000"
+        },
+        {
+          "match": "\\*",
+          "name": "keyword.operator.pointer.gcc.rs6000"
+        },
+        {
+          "match": "\\b[0-9]+\\b",
+          "name": "constant.numeric.integer.gcc.rs6000"
+        }
+      ]
+    },
+    "prototype-lines": {
+      "patterns": [
+        {
+          "comment": "Matches [pure] [const] etc at start of line",
+          "match": "^\\[(const|pure|fpmath)\\]",
+          "captures": {
+            "1": {
+              "name": "storage.modifier.gcc.rs6000"
+            }
+          }
+        },
+        {
+          "comment": "Matches the builtin function name",
+          "match": "\\b(__builtin_[a-zA-Z0-9_]+|vec_[a-zA-Z0-9_]+)\\b",
+          "name": "support.function.builtin.gcc.rs6000"
+        },
+        {
+          "comment": "Matches constraint arguments like <5> or [0,3]",
+          "match": "(<|\\[|\\{)([0-9,]+)(>|\\]|\\})",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.tag.begin.gcc.rs6000"
+            },
+            "2": {
+              "name": "constant.numeric.constraint.gcc.rs6000"
+            },
+            "3": {
+              "name": "punctuation.definition.tag.end.gcc.rs6000"
+            }
+          }
+        }
+      ]
+    },
+    "attribute-lines": {
+      "patterns": [
+        {
+          "comment": "Matches lines ending in { attributes }",
+          "begin": "^\\s*(RS6000_BIF_[A-Z0-9_]+)\\s+([a-zA-Z0-9_]+)\\s*(?=\\{)",
+          "beginCaptures": {
+            "1": {
+              "name": "variable.other.constant.enum.gcc.rs6000"
+            },
+            "2": {
+              "name": "entity.name.function.pattern.gcc.rs6000"
+            }
+          },
+          "end": "(\\})",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.section.block.end.gcc.rs6000"
+            }
+          },
+          "patterns": [
+            {
+              "match": "\\{",
+              "name": "punctuation.section.block.begin.gcc.rs6000"
+            },
+            {
+              "match": "\\b[a-zA-Z0-9_]+\\b",
+              "name": "support.constant.attribute.gcc.rs6000"
+            },
+            {
+              "match": ",",
+              "name": "punctuation.separator.delimiter.gcc.rs6000"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

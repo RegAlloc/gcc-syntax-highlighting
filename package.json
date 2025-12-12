@@ -37,6 +37,34 @@
   "contributes": {
     "languages": [
       {
+        "id": "rs6000-builtins",
+        "aliases": [
+          "GCC RS6000 Builtins"
+        ],
+        "filenames": [
+          "rs6000-builtins.def"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./pictures/rs6000.png",
+          "dark": "./pictures/rs6000.png"
+        }
+      },
+      {
+        "id": "rs6000-overload",
+        "aliases": [
+          "GCC RS6000 Overloads"
+        ],
+        "filenames": [
+          "rs6000-overload.def"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./pictures/rs6000.png",
+          "dark": "./pictures/rs6000.png"
+        }
+      },
+      {
         "id": "gcc-md",
         "aliases": [
           "GCC Machine Description",
@@ -96,6 +124,16 @@
       }
     ],
     "grammars": [
+      {
+        "language": "rs6000-builtins",
+        "scopeName": "source.gcc.rs6000",
+        "path": "./syntaxes/rs6000-builtins.tmLanguage.json"
+      },
+      {
+        "language": "rs6000-overload",
+        "scopeName": "source.gcc.rs6000-overload",
+        "path": "./syntaxes/rs6000-overload.tmLanguage.json"
+      },
       {
         "language": "gcc-md",
         "scopeName": "source.gcc.md",

@@ -1,0 +1,112 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "GCC RS6000 Overloads",
+  "scopeName": "source.gcc.rs6000-overload",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#stanza-headers"
+    },
+    {
+      "include": "#prototype-lines"
+    },
+    {
+      "include": "#mapping-lines"
+    },
+    {
+      "include": "#general-keywords"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "match": ";.*$",
+          "name": "comment.line.semicolon.gcc.rs6000-overload"
+        }
+      ]
+    },
+    "stanza-headers": {
+      "match": "^\\[\\s*([A-Z0-9_]+)\\s*,\\s*([a-zA-Z0-9_]+)\\s*,\\s*(__builtin_[a-zA-Z0-9_]+)(?:\\s*,\\s*([A-Z0-9_]+))?\\s*\\]",
+      "captures": {
+        "0": {
+          "name": "meta.tag.stanza.gcc.rs6000-overload"
+        },
+        "1": {
+          "name": "entity.name.type.class.id.gcc.rs6000-overload"
+        },
+        "2": {
+          "name": "string.unquoted.abi-name.gcc.rs6000-overload"
+        },
+        "3": {
+          "name": "entity.name.function.builtin.gcc.rs6000-overload"
+        },
+        "4": {
+          "name": "keyword.control.directive.ifdef.gcc.rs6000-overload"
+        }
+      }
+    },
+    "general-keywords": {
+      "patterns": [
+        {
+          "match": "\\b(const|signed|unsigned|void|bool|char|short|int|long|float|double|string|_Float128|__int128|__ibm128|_Decimal32|_Decimal64|_Decimal128)\\b",
+          "name": "storage.type.gcc.rs6000-overload"
+        },
+        {
+          "match": "\\b(vsc|vuc|vbc|vss|vus|vbs|vsi|vui|vbi|vsll|vull|vbll|vsq|vuq|vbq|vp|vf|vd|v256|v512)\\b",
+          "name": "storage.type.vector.gcc.rs6000-overload"
+        },
+        {
+          "match": "\\*",
+          "name": "keyword.operator.pointer.gcc.rs6000-overload"
+        },
+        {
+          "match": "\\b[0-9]+\\b",
+          "name": "constant.numeric.integer.gcc.rs6000-overload"
+        }
+      ]
+    },
+    "prototype-lines": {
+      "patterns": [
+        {
+          "comment": "Matches the builtin function name in a prototype line",
+          "match": "\\b(__builtin_[a-zA-Z0-9_]+|vec_[a-zA-Z0-9_]+)\\s*(?=\\()",
+          "name": "support.function.builtin.gcc.rs6000-overload"
+        },
+        {
+          "comment": "Matches constraint arguments like <5> or [0,3]",
+          "match": "(<|\\[|\\{)([0-9,]+)(>|\\]|\\})",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.tag.begin.gcc.rs6000-overload"
+            },
+            "2": {
+              "name": "constant.numeric.constraint.gcc.rs6000-overload"
+            },
+            "3": {
+              "name": "punctuation.definition.tag.end.gcc.rs6000-overload"
+            }
+          }
+        }
+      ]
+    },
+    "mapping-lines": {
+      "patterns": [
+        {
+          "comment": "Matches the mapping IDs (e.g., MTVSCR MTVSCR_VBC) on lines without semicolons",
+          "match": "^\\s*([A-Z0-9_]+)(?:\\s+([A-Z0-9_]+))?\\s*$",
+          "captures": {
+            "1": {
+              "name": "variable.other.constant.enum.bif-id.gcc.rs6000-overload"
+            },
+            "2": {
+              "name": "variable.other.constant.enum.unique-id.gcc.rs6000-overload"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
