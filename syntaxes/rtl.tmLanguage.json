@@ -29,9 +29,6 @@
           "include": "#paren-keywords"
         },
         {
-          "include": "#instruction-patterns"
-        },
-        {
           "include": "#registers"
         },
         {
