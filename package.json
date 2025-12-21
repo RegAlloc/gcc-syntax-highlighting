@@ -36,6 +36,16 @@
   "engines": {
     "vscode": "^1.70.0"
   },
+  "main": "./out/extension.js",
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "capabilities": {
+    "untrustedWorkspaces": {
+        "supported": true
+    }
+  },
   "categories": [
     "Programming Languages"
   ],
