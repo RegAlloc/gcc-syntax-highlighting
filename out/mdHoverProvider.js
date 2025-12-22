@@ -42,13 +42,13 @@ class GccMdHoverProvider {
         const wordRange = document.getWordRangeAtPosition(position);
         if (!wordRange)
             return null;
-        // Clean the word: remove quotes if the user hovers over "type"
         const word = document.getText(wordRange).replace(/"/g, '');
         const result = await this.findDefinitionWithComments(document, word);
         if (!result)
             return null;
         const markdown = new vscode.MarkdownString();
-        markdown.appendMarkdown(`#### 💡 Documentation: **${word}**\n`);
+        const title = result.isConstant ? `Constant: **${word}**` : `Definition: **${word}**`;
+        markdown.appendMarkdown(`### 💡 GCC ${title}\n`);
         if (result.comments) {
             markdown.appendMarkdown(`${result.comments}\n\n---\n`);
         }
@@ -66,37 +66,40 @@ class GccMdHoverProvider {
             if (!fs.existsSync(filePath))
                 continue;
             const content = fs.readFileSync(filePath, 'utf8');
+            // Try matching Standard Definitions (Iterators/Attrs)
             const defPattern = new RegExp(`\\(define_(attr\\s+"${name}"|[a-z]+_(iterator|attr)\\s+${name}\\b)`, 'm');
-            const match = content.match(defPattern);
+            let match = content.match(defPattern);
             if (match && match.index !== undefined) {
-                // Extract the full block by balancing parentheses
-                const definition = this.extractBalancedBlock(content.substring(match.index));
-                // Extract comments directly above the definition
-                const linesBefore = content.substring(0, match.index).split('\n');
-                let comments = [];
-                for (let i = linesBefore.length - 1; i >= 0; i--) {
-                    const line = linesBefore[i].trim();
-                    // Keep walking up as long as we see comments or empty lines
-                    if (line.startsWith(';') || line === '') {
-                        if (line.startsWith(';')) {
-                            comments.unshift(line.replace(/^;+\s*/, ''));
-                        }
-                    }
-                    else {
-                        break;
-                    }
-                }
-                return {
-                    definition: definition,
-                    comments: comments.join('  \n')
-                };
+                return this.packageResult(content, match.index, false);
+            }
+            // Try matching Constants: (NAME VALUE)
+            const constPattern = new RegExp(`\\(\\s*${name}\\s+([0-9a-fAxX]+|[-0-9]+)\\s*\\)`, 'm');
+            match = content.match(constPattern);
+            if (match && match.index !== undefined) {
+                return this.packageResult(content, match.index, true);
             }
         }
         return null;
     }
+    packageResult(content, index, isConstant) {
+        const definition = isConstant
+            ? content.substring(index).split('\n')[0].trim() // Just the line for constants
+            : this.extractBalancedBlock(content.substring(index));
+        const linesBefore = content.substring(0, index).split('\n');
+        let comments = [];
+        for (let i = linesBefore.length - 1; i >= 0; i--) {
+            const line = linesBefore[i].trim();
+            if (line.startsWith(';') || line === '') {
+                if (line.startsWith(';'))
+                    comments.unshift(line.replace(/^;+\s*/, ''));
+            }
+            else
+                break;
+        }
+        return { definition, comments: comments.join('  \n'), isConstant };
+    }
     extractBalancedBlock(text) {
-        let depth = 0;
-        let endIdx = 0;
+        let depth = 0, endIdx = 0;
         for (let i = 0; i < text.length; i++) {
             if (text[i] === '(')
                 depth++;
