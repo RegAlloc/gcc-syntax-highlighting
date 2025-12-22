@@ -11,11 +11,11 @@ export class GCCMdLinkProvider implements vscode.DocumentLinkProvider {
 
         while ((match = includeRegex.exec(text)) !== null) {
             const fileName = match[1];
-            const fileNameOffset = match[0].indexOf(fileName);
+            const startIdx = match.index + match[0].indexOf(fileName);
             
             const range = new vscode.Range(
-                document.positionAt(match.index + fileNameOffset),
-                document.positionAt(match.index + fileNameOffset + fileName.length)
+                document.positionAt(startIdx),
+                document.positionAt(startIdx + fileName.length)
             );
 
             const currentDir = path.dirname(document.uri.fsPath);
@@ -24,13 +24,13 @@ export class GCCMdLinkProvider implements vscode.DocumentLinkProvider {
             if (fs.existsSync(filePath)) {
                 const targetUri = vscode.Uri.file(filePath);
 
-                // Use our custom command and pass the URI as an argument
+                // This is the critical part: mapping the URI to our custom command
                 const commandUri = vscode.Uri.parse(
                     `command:gcc-md.openFilePermanent?${encodeURIComponent(JSON.stringify([targetUri]))}`
                 );
 
                 const link = new vscode.DocumentLink(range, commandUri);
-                link.tooltip = `Open ${fileName} in a new tab`;
+                link.tooltip = "Click to open in a new permanent tab";
                 links.push(link);
             }
         }

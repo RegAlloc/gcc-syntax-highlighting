@@ -50,6 +50,12 @@
     "Programming Languages"
   ],
   "contributes": {
+    "commands": [
+        {
+            "command": "gcc-md.openFilePermanent",
+            "title": "Open MD Include"
+        }
+    ],
     "languages": [
       {
         "id": "rs6000-builtins",

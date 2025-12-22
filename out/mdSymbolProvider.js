@@ -33,33 +33,55 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GCCMdLinkProvider = void 0;
+exports.GccMdSymbolProvider = void 0;
 const vscode = __importStar(require("vscode"));
 const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
-class GCCMdLinkProvider {
-    provideDocumentLinks(document) {
-        const links = [];
+class GccMdSymbolProvider {
+    async provideDefinition(document, position) {
+        const wordRange = document.getWordRangeAtPosition(position);
+        if (!wordRange)
+            return null;
+        const word = document.getText(wordRange);
+        // 1. Search in the current file first
+        let location = this.findInFile(document.uri, document.getText(), word);
+        if (location)
+            return location;
+        // 2. Search in all included files
+        return this.findInIncludes(document, word);
+    }
+    findInFile(uri, text, name) {
+        // This regex matches mode, code, int, and subst iterators/attributes
+        // Example: (define_mode_iterator INT1 ...
+        // Example: (define_code_attr return_str ...
+        const pattern = new RegExp(`\\(define_(mode|code|int|subst)_(iterator|attr)\\s+${name}\\b`, 'm');
+        const match = text.match(pattern);
+        if (match && match.index !== undefined) {
+            const lines = text.substring(0, match.index).split('\n');
+            const line = lines.length - 1;
+            const character = lines[line].length;
+            return new vscode.Location(uri, new vscode.Position(line, character));
+        }
+        return null;
+    }
+    async findInIncludes(document, name) {
         const text = document.getText();
         const includeRegex = /\(include\s+"([^"]+)"\)/g;
         let match;
         while ((match = includeRegex.exec(text)) !== null) {
             const fileName = match[1];
-            const startIdx = match.index + match[0].indexOf(fileName);
-            const range = new vscode.Range(document.positionAt(startIdx), document.positionAt(startIdx + fileName.length));
             const currentDir = path.dirname(document.uri.fsPath);
             const filePath = path.resolve(currentDir, fileName);
             if (fs.existsSync(filePath)) {
-                const targetUri = vscode.Uri.file(filePath);
-                // This is the critical part: mapping the URI to our custom command
-                const commandUri = vscode.Uri.parse(`command:gcc-md.openFilePermanent?${encodeURIComponent(JSON.stringify([targetUri]))}`);
-                const link = new vscode.DocumentLink(range, commandUri);
-                link.tooltip = "Click to open in a new permanent tab";
-                links.push(link);
+                const includeUri = vscode.Uri.file(filePath);
+                const includeDoc = await vscode.workspace.openTextDocument(includeUri);
+                const location = this.findInFile(includeUri, includeDoc.getText(), name);
+                if (location)
+                    return location;
             }
         }
-        return links;
+        return null;
     }
 }
-exports.GCCMdLinkProvider = GCCMdLinkProvider;
-//# sourceMappingURL=linkProvider.js.map
+exports.GccMdSymbolProvider = GccMdSymbolProvider;
+//# sourceMappingURL=mdSymbolProvider.js.map

@@ -34,22 +34,27 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.activate = activate;
+exports.deactivate = deactivate;
 const vscode = __importStar(require("vscode"));
 const linkProvider_1 = require("./linkProvider");
-const symbolDefinitionProvider_1 = require("./symbolDefinitionProvider");
+const mdSymbolProvider_1 = require("./mdSymbolProvider");
+const mdHoverProvider_1 = require("./mdHoverProvider"); // Import the new provider
 function activate(context) {
     const selector = { scheme: 'file', language: 'gcc-md' };
-    // 1. Register a custom command to open files permanently
+    // 1. Register the custom command
     const openCommand = vscode.commands.registerCommand('gcc-md.openFilePermanent', (uri) => {
         vscode.window.showTextDocument(uri, {
-            preview: false, // This ensures it opens in a new, permanent tab
+            preview: false,
             preserveFocus: false
         });
     });
     context.subscriptions.push(openCommand);
-    // 2. Register the Link Provider
+    // 2. Register the providers
     context.subscriptions.push(vscode.languages.registerDocumentLinkProvider(selector, new linkProvider_1.GCCMdLinkProvider()));
-    // 3. Register the Symbol Provider (for C++ blocks)
-    context.subscriptions.push(vscode.languages.registerDefinitionProvider(selector, new symbolDefinitionProvider_1.GccSymbolDefinitionProvider()));
+    // New: Register the MD Iterator/Attribute jumper
+    context.subscriptions.push(vscode.languages.registerDefinitionProvider(selector, new mdSymbolProvider_1.GccMdSymbolProvider()));
+    // New: Register the Hover Provider
+    context.subscriptions.push(vscode.languages.registerHoverProvider(selector, new mdHoverProvider_1.GccMdHoverProvider()));
 }
+function deactivate() { }
 //# sourceMappingURL=extension.js.map
