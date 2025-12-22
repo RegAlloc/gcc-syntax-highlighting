@@ -38,17 +38,19 @@ const vscode = __importStar(require("vscode"));
 const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
 class GccMdHoverProvider {
+    keywords = new Set(['const_int', 'const_string', 'match_operand', 'set']);
     async provideHover(document, position) {
         const wordRange = document.getWordRangeAtPosition(position);
         if (!wordRange)
             return null;
         const word = document.getText(wordRange).replace(/"/g, '');
+        if (this.keywords.has(word))
+            return null;
         const result = await this.findDefinitionWithComments(document, word);
         if (!result)
             return null;
         const markdown = new vscode.MarkdownString();
-        const title = result.isConstant ? `Constant: **${word}**` : `Definition: **${word}**`;
-        markdown.appendMarkdown(`### 💡 GCC ${title}\n`);
+        markdown.appendMarkdown(`### 💡 GCC MD: **${word}**\n`);
         if (result.comments) {
             markdown.appendMarkdown(`${result.comments}\n\n---\n`);
         }
@@ -58,45 +60,36 @@ class GccMdHoverProvider {
     async findDefinitionWithComments(document, name) {
         const currentDir = path.dirname(document.uri.fsPath);
         const files = fs.readdirSync(currentDir).filter(f => f.endsWith('.md'));
-        const sortedFiles = [
-            document.uri.fsPath,
-            ...files.map(f => path.join(currentDir, f)).filter(p => p !== document.uri.fsPath)
-        ];
+        const sortedFiles = [document.uri.fsPath, ...files.map(f => path.join(currentDir, f)).filter(p => p !== document.uri.fsPath)];
         for (const filePath of sortedFiles) {
             if (!fs.existsSync(filePath))
                 continue;
             const content = fs.readFileSync(filePath, 'utf8');
-            // Try matching Standard Definitions (Iterators/Attrs)
-            const defPattern = new RegExp(`\\(define_(attr\\s+"${name}"|[a-z]+_(iterator|attr)\\s+${name}\\b)`, 'm');
-            let match = content.match(defPattern);
+            const defPattern = new RegExp(`\\(define_(attr|predicate|special_predicate|constraint|register_constraint)\\s+"${name}"` +
+                `|\\(define_[a-z]+_(iterator|attr)\\s+${name}\\b` +
+                `|\\(\\s*${name}\\s+([0-x0-9a-fA-F-]+)\\s*\\)`, 'm');
+            const match = content.match(defPattern);
             if (match && match.index !== undefined) {
-                return this.packageResult(content, match.index, false);
-            }
-            // Try matching Constants: (NAME VALUE)
-            const constPattern = new RegExp(`\\(\\s*${name}\\s+([0-9a-fAxX]+|[-0-9]+)\\s*\\)`, 'm');
-            match = content.match(constPattern);
-            if (match && match.index !== undefined) {
-                return this.packageResult(content, match.index, true);
+                // If it starts with '(', it's either a (NAME VALUE) constant or a (define_...)
+                const isConstant = !match[0].includes('define');
+                const definition = isConstant
+                    ? match[0]
+                    : this.extractBalancedBlock(content.substring(match.index));
+                const linesBefore = content.substring(0, match.index).split('\n');
+                let comments = [];
+                for (let i = linesBefore.length - 1; i >= 0; i--) {
+                    const line = linesBefore[i].trim();
+                    if (line.startsWith(';') || line === '') {
+                        if (line.startsWith(';'))
+                            comments.unshift(line.replace(/^;+\s*/, ''));
+                    }
+                    else
+                        break;
+                }
+                return { definition, comments: comments.join('  \n') };
             }
         }
         return null;
-    }
-    packageResult(content, index, isConstant) {
-        const definition = isConstant
-            ? content.substring(index).split('\n')[0].trim() // Just the line for constants
-            : this.extractBalancedBlock(content.substring(index));
-        const linesBefore = content.substring(0, index).split('\n');
-        let comments = [];
-        for (let i = linesBefore.length - 1; i >= 0; i--) {
-            const line = linesBefore[i].trim();
-            if (line.startsWith(';') || line === '') {
-                if (line.startsWith(';'))
-                    comments.unshift(line.replace(/^;+\s*/, ''));
-            }
-            else
-                break;
-        }
-        return { definition, comments: comments.join('  \n'), isConstant };
     }
     extractBalancedBlock(text) {
         let depth = 0, endIdx = 0;
