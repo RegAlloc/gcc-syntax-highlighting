@@ -33,55 +33,41 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GccMdSymbolProvider = void 0;
+exports.GccMdReferenceProvider = void 0;
 const vscode = __importStar(require("vscode"));
-const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
-class GccMdSymbolProvider {
-    keywords = new Set(['const_int', 'const_string', 'match_operand', 'match_scratch', 'set', 'list', 'unspec', 'unspec_volatile']);
-    async provideDefinition(document, position) {
+class GccMdReferenceProvider {
+    cache;
+    constructor(cache) {
+        this.cache = cache;
+    }
+    async provideReferences(document, position) {
         const wordRange = document.getWordRangeAtPosition(position);
         if (!wordRange)
             return null;
         const word = document.getText(wordRange).replace(/"/g, '');
-        if (this.keywords.has(word))
-            return null;
-        const currentDir = path.dirname(document.uri.fsPath);
-        // --- PRIORITY 1: Local Directory (.md files) ---
-        const localFiles = fs.readdirSync(currentDir)
-            .filter(f => f.endsWith('.md'))
-            .map(f => path.join(currentDir, f));
-        // Move current file to front of the search queue
-        const searchQueue = [
-            document.uri.fsPath,
-            ...localFiles.filter(p => p !== document.uri.fsPath)
-        ];
-        // --- PRIORITY 2: common.md in the parent directory ---
-        const commonMdPath = path.resolve(currentDir, '../common.md');
-        if (fs.existsSync(commonMdPath)) {
-            searchQueue.push(commonMdPath);
-        }
-        for (const filePath of searchQueue) {
-            const content = fs.readFileSync(filePath, 'utf8');
-            const location = this.findInText(filePath, content, word);
-            if (location)
-                return location;
-        }
-        return null;
-    }
-    findInText(filePath, content, word) {
-        const pattern = new RegExp(`\\(define_(attr|predicate|special_predicate|constraint|register_constraint|memory_constraint|address_constraint)\\s+"${word}"` +
-            `|\\(define_[a-z]+_(iterator|attr)\\s+${word}\\b` +
-            `|\\(\\s*${word}\\s+([0-x0-9a-fA-F-]+)\\s*\\)`, 'm');
-        const match = content.match(pattern);
-        if (match && match.index !== undefined) {
-            const lines = content.substring(0, match.index).split('\n');
-            const line = lines.length - 1;
-            const character = lines[line].length;
-            return new vscode.Location(vscode.Uri.file(filePath), new vscode.Range(line, character, line, character + word.length));
-        }
-        return null;
+        const filesToScan = this.cache.getFilesWithWord(word);
+        const locations = [];
+        // Scan only relevant files in parallel
+        await Promise.all(filesToScan.map(async (filePath) => {
+            const content = await fs.promises.readFile(filePath, 'utf8');
+            const lines = content.split('\n');
+            lines.forEach((lineText, lineIdx) => {
+                let startPos = 0;
+                while ((startPos = lineText.indexOf(word, startPos)) !== -1) {
+                    const endPos = startPos + word.length;
+                    // Strict word boundary check
+                    const before = lineText[startPos - 1] || ' ';
+                    const after = lineText[endPos] || ' ';
+                    if (!/[a-zA-Z0-9_]/.test(before) && !/[a-zA-Z0-9_]/.test(after)) {
+                        locations.push(new vscode.Location(vscode.Uri.file(filePath), new vscode.Range(lineIdx, startPos, lineIdx, endPos)));
+                    }
+                    startPos = endPos;
+                }
+            });
+        }));
+        return locations;
     }
 }
-exports.GccMdSymbolProvider = GccMdSymbolProvider;
+exports.GccMdReferenceProvider = GccMdReferenceProvider;
 //# sourceMappingURL=mdReferenceProvider.js.map

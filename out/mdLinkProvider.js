@@ -65,4 +65,4 @@ class GCCMdLinkProvider {
     }
 }
 exports.GCCMdLinkProvider = GCCMdLinkProvider;
-//# sourceMappingURL=linkProvider.js.map
+//# sourceMappingURL=mdLinkProvider.js.map

@@ -35,79 +35,26 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GccMdHoverProvider = void 0;
 const vscode = __importStar(require("vscode"));
-const path = __importStar(require("path"));
-const fs = __importStar(require("fs"));
 class GccMdHoverProvider {
-    keywords = new Set(['const_int', 'const_string', 'match_operand', 'set']);
-    async provideHover(document, position) {
+    cache;
+    constructor(cache) {
+        this.cache = cache;
+    }
+    provideHover(document, position) {
         const wordRange = document.getWordRangeAtPosition(position);
         if (!wordRange)
             return null;
         const word = document.getText(wordRange).replace(/"/g, '');
-        if (this.keywords.has(word))
-            return null;
-        const currentDir = path.dirname(document.uri.fsPath);
-        const localFiles = fs.readdirSync(currentDir)
-            .filter(f => f.endsWith('.md'))
-            .map(f => path.join(currentDir, f));
-        const searchQueue = [
-            document.uri.fsPath,
-            ...localFiles.filter(p => p !== document.uri.fsPath)
-        ];
-        const commonMdPath = path.resolve(currentDir, '../common.md');
-        if (fs.existsSync(commonMdPath)) {
-            searchQueue.push(commonMdPath);
-        }
-        for (const filePath of searchQueue) {
-            const content = fs.readFileSync(filePath, 'utf8');
-            const result = this.parseDefinition(filePath, content, word);
-            if (result) {
-                const markdown = new vscode.MarkdownString();
-                markdown.appendMarkdown(`### 💡 GCC MD: **${word}**\n`);
-                if (result.comments)
-                    markdown.appendMarkdown(`${result.comments}\n\n---\n`);
-                markdown.appendCodeblock(result.definition, 'gcc-md');
-                return new vscode.Hover(markdown);
-            }
+        const symbol = this.cache.getSymbol(word);
+        if (symbol) {
+            const markdown = new vscode.MarkdownString();
+            markdown.appendMarkdown(`### 💡 GCC MD: **${word}**\n`);
+            if (symbol.comments)
+                markdown.appendMarkdown(`${symbol.comments}\n\n---\n`);
+            markdown.appendCodeblock(symbol.definition, 'gcc-md');
+            return new vscode.Hover(markdown);
         }
         return null;
-    }
-    parseDefinition(filePath, content, name) {
-        const defPattern = new RegExp(`\\(define_(attr|predicate|special_predicate|constraint|register_constraint|memory_constraint|address_constraint)\\s+"${name}"` +
-            `|\\(define_[a-z]+_(iterator|attr)\\s+${name}\\b` +
-            `|\\(\\s*${name}\\s+([0-x0-9a-fA-F-]+)\\s*\\)`, 'm');
-        const match = content.match(defPattern);
-        if (match && match.index !== undefined) {
-            const isConstant = !match[0].includes('define');
-            const definition = isConstant ? match[0] : this.extractBalancedBlock(content.substring(match.index));
-            const linesBefore = content.substring(0, match.index).split('\n');
-            let comments = [];
-            for (let i = linesBefore.length - 1; i >= 0; i--) {
-                const line = linesBefore[i].trim();
-                if (line.startsWith(';') || line === '') {
-                    if (line.startsWith(';'))
-                        comments.unshift(line.replace(/^;+\s*/, ''));
-                }
-                else
-                    break;
-            }
-            return { definition, comments: comments.join('  \n') };
-        }
-        return null;
-    }
-    extractBalancedBlock(text) {
-        let depth = 0, endIdx = 0;
-        for (let i = 0; i < text.length; i++) {
-            if (text[i] === '(')
-                depth++;
-            else if (text[i] === ')')
-                depth--;
-            if (depth === 0 && i > 0) {
-                endIdx = i + 1;
-                break;
-            }
-        }
-        return text.substring(0, endIdx || text.indexOf(')'));
     }
 }
 exports.GccMdHoverProvider = GccMdHoverProvider;

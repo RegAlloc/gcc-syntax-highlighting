@@ -11,26 +11,28 @@ export class GCCMdLinkProvider implements vscode.DocumentLinkProvider {
 
         while ((match = includeRegex.exec(text)) !== null) {
             const fileName = match[1];
+            // Calculate exact position of the filename for the underline
             const startIdx = match.index + match[0].indexOf(fileName);
-            
             const range = new vscode.Range(
                 document.positionAt(startIdx),
                 document.positionAt(startIdx + fileName.length)
             );
 
+            // Resolve the path relative to the current file's directory
             const currentDir = path.dirname(document.uri.fsPath);
             const filePath = path.resolve(currentDir, fileName);
 
             if (fs.existsSync(filePath)) {
                 const targetUri = vscode.Uri.file(filePath);
 
-                // This is the critical part: mapping the URI to our custom command
+                // Use the custom command we registered in extension.ts
+                // This ensures every click opens a new, permanent tab
                 const commandUri = vscode.Uri.parse(
                     `command:gcc-md.openFilePermanent?${encodeURIComponent(JSON.stringify([targetUri]))}`
                 );
 
                 const link = new vscode.DocumentLink(range, commandUri);
-                link.tooltip = "Click to open in a new permanent tab";
+                link.tooltip = `Follow include: ${filePath}`;
                 links.push(link);
             }
         }
