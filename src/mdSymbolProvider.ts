@@ -4,52 +4,46 @@ import * as fs from 'fs';
 
 export class GccMdSymbolProvider implements vscode.DefinitionProvider {
     public async provideDefinition(
-        document: vscode.TextDocument,
+        document: vscode.TextDocument, 
         position: vscode.Position
     ): Promise<vscode.Definition | null> {
         const wordRange = document.getWordRangeAtPosition(position);
         if (!wordRange) return null;
-        const word = document.getText(wordRange);
+        
+        // Clean the word: remove quotes if the user clicked "type" inside "set_attr"
+        const word = document.getText(wordRange).replace(/"/g, '');
 
-        // 1. Search in the current file first
-        let location = this.findInFile(document.uri, document.getText(), word);
-        if (location) return location;
+        const currentDir = path.dirname(document.uri.fsPath);
+        const files = fs.readdirSync(currentDir).filter(f => f.endsWith('.md'));
+        
+        // Prioritize current file, then search all .md files in the backend directory
+        const sortedFiles = [
+            document.uri.fsPath, 
+            ...files.map(f => path.join(currentDir, f)).filter(p => p !== document.uri.fsPath)
+        ];
 
-        // 2. Search in all included files
-        return this.findInIncludes(document, word);
-    }
+        for (const filePath of sortedFiles) {
+            if (!fs.existsSync(filePath)) continue;
+            const content = fs.readFileSync(filePath, 'utf8');
+            
+            /**
+             * Regex Explanation:
+             * 1. \\(define_attr\\s+"${word}" -> Matches (define_attr "type"
+             * 2. \\(define_[a-z]+_(iterator|attr)\\s+${word}\\b -> Matches (define_mode_iterator INT1
+             */
+            const pattern = new RegExp(`\\(define_(attr\\s+"${word}"|[a-z]+_(iterator|attr)\\s+${word}\\b)`, 'm');
+            const match = content.match(pattern);
 
-    private findInFile(uri: vscode.Uri, text: string, name: string): vscode.Location | null {
-        // This regex matches mode, code, int, and subst iterators/attributes
-        // Example: (define_mode_iterator INT1 ...
-        // Example: (define_code_attr return_str ...
-        const pattern = new RegExp(`\\(define_(mode|code|int|subst)_(iterator|attr)\\s+${name}\\b`, 'm');
-        const match = text.match(pattern);
+            if (match && match.index !== undefined) {
+                const textBefore = content.substring(0, match.index);
+                const lines = textBefore.split('\n');
+                const lineNum = lines.length - 1;
+                const charNum = lines[lineNum].length;
 
-        if (match && match.index !== undefined) {
-            const lines = text.substring(0, match.index).split('\n');
-            const line = lines.length - 1;
-            const character = lines[line].length;
-            return new vscode.Location(uri, new vscode.Position(line, character));
-        }
-        return null;
-    }
-
-    private async findInIncludes(document: vscode.TextDocument, name: string): Promise<vscode.Location | null> {
-        const text = document.getText();
-        const includeRegex = /\(include\s+"([^"]+)"\)/g;
-        let match;
-
-        while ((match = includeRegex.exec(text)) !== null) {
-            const fileName = match[1];
-            const currentDir = path.dirname(document.uri.fsPath);
-            const filePath = path.resolve(currentDir, fileName);
-
-            if (fs.existsSync(filePath)) {
-                const includeUri = vscode.Uri.file(filePath);
-                const includeDoc = await vscode.workspace.openTextDocument(includeUri);
-                const location = this.findInFile(includeUri, includeDoc.getText(), name);
-                if (location) return location;
+                return new vscode.Location(
+                    vscode.Uri.file(filePath),
+                    new vscode.Position(lineNum, charNum)
+                );
             }
         }
         return null;
