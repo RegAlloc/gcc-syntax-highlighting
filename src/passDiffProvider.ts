@@ -19,7 +19,7 @@ export class GccPassDiffProvider {
         // 1. Parse the current file: test.c.286r.combine
         // Regex: (base).(number)(type).(passname)
         // We match strictly 3 digits as per your spec, but allow flexible base names.
-        const fileRegex = /^(.+)\.(\d{3})([tr])\.(.+)$/;
+        const fileRegex = /^(.+)\.(\d{3})([tri])\.(.+)$/;
         const match = fileRegex.exec(currentFilename);
 
         if (!match) {
