@@ -7,6 +7,7 @@ import { GccMdHoverProvider } from './mdHoverProvider';
 import { GccMdReferenceProvider } from './mdReferenceProvider';
 import { GCCMdLinkProvider } from './linkProvider';
 import { GccPassDiffProvider } from './passDiffProvider';
+import { GccPassTreeProvider } from './passTreeProvider';
 
 const mdCache = new GccMdCache();
 const rtlCache = new RtlDefCache(); // Instantiate
@@ -39,6 +40,9 @@ export async function activate(context: vscode.ExtensionContext) {
         }
     };
 
+    const treeProvider = new GccPassTreeProvider();
+    vscode.window.registerTreeDataProvider('gcc-dump-explorer', treeProvider);
+
     if (vscode.window.activeTextEditor) {
         await ensureBackendIndexed(vscode.window.activeTextEditor.document);
     }
@@ -66,6 +70,8 @@ export async function activate(context: vscode.ExtensionContext) {
     // NOTE: Hover Provider is registered for BOTH MD and Dumps
     // We pass both caches to it
     context.subscriptions.push(vscode.languages.registerHoverProvider(dumpSelector, new GccMdHoverProvider(mdCache, rtlCache)));
+    context.subscriptions.push(vscode.commands.registerCommand('gcc-md.refreshPasses', () => treeProvider.refresh()));
+    context.subscriptions.push(vscode.commands.registerCommand('gcc-md.filterPasses', () => treeProvider.promptFilter()));
 
     // REGISTER THE TIME TRAVEL COMMAND
     context.subscriptions.push(vscode.commands.registerCommand('gcc-md.comparePreviousPass', async () => {

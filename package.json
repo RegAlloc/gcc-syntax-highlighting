@@ -50,6 +50,23 @@
     "Programming Languages"
   ],
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "gcc-explorer",
+          "title": "GCC Explorer",
+          "icon": "$(beaker)" 
+        }
+      ]
+    },
+    "views": {
+      "gcc-explorer": [
+        {
+          "id": "gcc-dump-explorer",
+          "name": "Compilation Passes"
+        }
+      ]
+    },
     "commands": [
         {
             "command": "gcc-md.openFilePermanent",
@@ -59,13 +76,35 @@
         "command": "gcc-md.comparePreviousPass",
         "title": "Compare with Previous Pass",
         "icon": "$(history)" 
-        }
+        },
+        {
+          "command": "gcc-md.refreshPasses",
+          "title": "Refresh Passes",
+          "icon": "$(refresh)" 
+        },
+        {
+        "command": "gcc-md.filterPasses",
+        "title": "Filter Categories",
+        "icon": "$(filter)"
+      }
     ],
     "menus": {
       "editor/title": [
         {
           "command": "gcc-md.comparePreviousPass",
-          "when": "resourceFilename =~ /\\.[0-9]{3}[tr]\\./",
+          "when": "resourceFilename =~ /\\.[0-9]{3}[tir]\\./",
+          "group": "navigation"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "gcc-md.refreshPasses",
+          "when": "view == gcc-dump-explorer",
+          "group": "navigation"
+        },
+        {
+          "command": "gcc-md.filterPasses",
+          "when": "view == gcc-dump-explorer",
           "group": "navigation"
         }
       ] 
