@@ -75,7 +75,7 @@
         {
         "command": "gcc-md.comparePreviousPass",
         "title": "Compare with Previous Pass",
-        "icon": "$(history)" 
+        "icon": "$(diff-multiple)"
         },
         {
           "command": "gcc-md.refreshPasses",
@@ -100,7 +100,7 @@
       {
         "command": "gcc-md.openDotFile",
         "title": "Open Graph (CFG)",
-        "icon": "$(graph)"
+        "icon": "$(layers-dot)"
       }
     ],
     "menus": {
