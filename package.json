@@ -86,6 +86,16 @@
         "command": "gcc-md.filterPasses",
         "title": "Filter Categories",
         "icon": "$(filter)"
+        },
+        {
+        "command": "gcc-md.toggleFocus",
+        "title": "Hide Noise",
+        "icon": "$(eye-closed)"
+      },
+      {
+        "command": "gcc-md.toggleFocus_on", 
+        "title": "Show Noise", 
+        "icon": "$(eye)"
       }
     ],
     "menus": {
@@ -93,6 +103,16 @@
         {
           "command": "gcc-md.comparePreviousPass",
           "when": "resourceFilename =~ /\\.[0-9]{3}[tir]\\./",
+          "group": "navigation"
+        },
+        {
+          "command": "gcc-md.toggleFocus",
+          "when": "resourceFilename =~ /\\.[0-9]{3}[tir]\\.[^.]+$/ && !gcc-md.focusModeActive",
+          "group": "navigation"
+        },
+        {
+          "command": "gcc-md.toggleFocus_on",
+          "when": "resourceFilename =~ /\\.[0-9]{3}[tir]\\.[^.]+$/ && gcc-md.focusModeActive",
           "group": "navigation"
         }
       ],
