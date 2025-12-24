@@ -9,6 +9,8 @@ import { GCCMdLinkProvider } from './linkProvider';
 import { GccPassDiffProvider } from './passDiffProvider';
 import { GccPassTreeProvider } from './passTreeProvider';
 import { GccFocusProvider } from './focusProvider'; // <--- 1. IMPORT THIS
+import { GccGraphProvider } from './graphProvider'; // <--- Import
+
 
 const mdCache = new GccMdCache();
 const rtlCache = new RtlDefCache(); // Instantiate
@@ -62,6 +64,13 @@ export async function activate(context: vscode.ExtensionContext) {
 
     const treeProvider = new GccPassTreeProvider();
     vscode.window.registerTreeDataProvider('gcc-dump-explorer', treeProvider);
+
+    const graphProvider = new GccGraphProvider();
+
+    context.subscriptions.push(vscode.commands.registerCommand('gcc-md.openDotFile', () => {
+        const editor = vscode.window.activeTextEditor;
+        if (editor) graphProvider.openDotFile(editor);
+    }));
 
     if (vscode.window.activeTextEditor) {
         await ensureBackendIndexed(vscode.window.activeTextEditor.document);

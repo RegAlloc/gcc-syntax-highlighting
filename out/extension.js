@@ -46,6 +46,7 @@ const linkProvider_1 = require("./linkProvider");
 const passDiffProvider_1 = require("./passDiffProvider");
 const passTreeProvider_1 = require("./passTreeProvider");
 const focusProvider_1 = require("./focusProvider"); // <--- 1. IMPORT THIS
+const graphProvider_1 = require("./graphProvider"); // <--- Import
 const mdCache = new mdCache_1.GccMdCache();
 const rtlCache = new rtlCache_1.RtlDefCache(); // Instantiate
 const initializedBackends = new Set();
@@ -93,6 +94,12 @@ async function activate(context) {
     };
     const treeProvider = new passTreeProvider_1.GccPassTreeProvider();
     vscode.window.registerTreeDataProvider('gcc-dump-explorer', treeProvider);
+    const graphProvider = new graphProvider_1.GccGraphProvider();
+    context.subscriptions.push(vscode.commands.registerCommand('gcc-md.openDotFile', () => {
+        const editor = vscode.window.activeTextEditor;
+        if (editor)
+            graphProvider.openDotFile(editor);
+    }));
     if (vscode.window.activeTextEditor) {
         await ensureBackendIndexed(vscode.window.activeTextEditor.document);
     }

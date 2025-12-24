@@ -96,6 +96,11 @@
         "command": "gcc-md.toggleFocus_on", 
         "title": "Show Noise", 
         "icon": "$(eye)"
+      },
+      {
+        "command": "gcc-md.openDotFile",
+        "title": "Open Graph (CFG)",
+        "icon": "$(graph)"
       }
     ],
     "menus": {
@@ -113,6 +118,11 @@
         {
           "command": "gcc-md.toggleFocus_on",
           "when": "resourceFilename =~ /\\.[0-9]{3}[tir]\\.[^.]+$/ && gcc-md.focusModeActive",
+          "group": "navigation"
+        },
+        {
+          "command": "gcc-md.openDotFile",
+          "when": "resourceFilename =~ /\\.[0-9]{3}[tir]\\.[^.]+$/",
           "group": "navigation"
         }
       ],
