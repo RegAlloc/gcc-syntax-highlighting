@@ -45,17 +45,12 @@ class PassItem extends vscode.TreeItem {
     passNumber;
     descriptionText;
     constructor(label, type, uri, rootName, passNumber, descriptionText) {
-        // 1. Determine Collapsible State
         let state = vscode.TreeItemCollapsibleState.None;
         if (type === 'root') {
-            // Testcase folders (abc.c) start Collapsed (standard behavior)
-            // or Expanded if you want them open by default. Let's keep them Collapsed until you click.
             state = vscode.TreeItemCollapsibleState.Collapsed;
         }
-        else if (type === 'group') {
-            // --- THE FIX ---
-            // Categories (GIMPLE/IPA/RTL) now start COLLAPSED.
-            // They will only show their files when you explicitly click them.
+        else if (type === 'group' || type === 'subgroup') {
+            // Groups start collapsed to keep UI clean
             state = vscode.TreeItemCollapsibleState.Collapsed;
         }
         super(label, state);
@@ -65,7 +60,6 @@ class PassItem extends vscode.TreeItem {
         this.rootName = rootName;
         this.passNumber = passNumber;
         this.descriptionText = descriptionText;
-        // 2. Configure Item Properties
         if (type === 'file') {
             this.resourceUri = uri;
             this.command = {
@@ -80,8 +74,10 @@ class PassItem extends vscode.TreeItem {
             this.iconPath = new vscode.ThemeIcon('symbol-class');
             this.description = "Source File";
         }
+        else if (label === 'DOT Files') {
+            this.iconPath = new vscode.ThemeIcon('graph');
+        }
         else {
-            // Group Icons
             this.iconPath = new vscode.ThemeIcon('list-tree');
         }
     }
@@ -104,7 +100,7 @@ class GccPassTreeProvider {
     refresh() {
         this._onDidChangeTreeData.fire();
     }
-    // --- FILTER DIALOG (ROBUST) ---
+    // --- FILTER DIALOG ---
     promptFilter() {
         return new Promise((resolve) => {
             const quickPick = vscode.window.createQuickPick();
@@ -145,13 +141,29 @@ class GccPassTreeProvider {
         if (!element) {
             return this.getTestcaseRoots();
         }
-        // 2. GROUPS
+        // 2. MAIN GROUPS
         if (element.type === 'root') {
             return this.getSmartCategories(element.label);
         }
-        // 3. FILES
+        // 3. DOT SUBGROUPS (Smart & Filtered)
+        if (element.label === 'DOT Files' && element.rootName) {
+            // FIX: Call the smart detector for sub-groups instead of returning static list
+            return this.getDotSubgroups(element.rootName);
+        }
+        // 4. FILES (Standard Passes)
         if (element.type === 'group' && element.rootName) {
-            return this.getPassFiles(element.rootName, element.label);
+            return this.getPassFiles(element.rootName, element.label, false);
+        }
+        // 5. GRAPH FILES (Inside Subgroups)
+        if (element.type === 'subgroup' && element.rootName) {
+            let category = '';
+            if (element.label === 'GIMPLE')
+                category = 'GIMPLE Passes';
+            if (element.label === 'IPA')
+                category = 'IPA Passes';
+            if (element.label === 'RTL')
+                category = 'RTL Passes';
+            return this.getPassFiles(element.rootName, category, true);
         }
         return [];
     }
@@ -159,9 +171,10 @@ class GccPassTreeProvider {
         if (!this.currentDir)
             return [];
         const files = await fs.promises.readdir(this.currentDir);
-        let hasGimple = false;
-        let hasIpa = false;
-        let hasRtl = false;
+        let hasGimple = false, hasIpa = false, hasRtl = false;
+        // Flags to track if we have ANY valid dot files visible under current filter
+        let showDotFolder = false;
+        let hasGimpleDot = false, hasIpaDot = false, hasRtlDot = false;
         const typeRegex = /^.+\.\d{3}([tri])\..+$/;
         for (const f of files) {
             if (!f.startsWith(baseName))
@@ -169,17 +182,27 @@ class GccPassTreeProvider {
             const match = typeRegex.exec(f);
             if (match) {
                 const type = match[1];
-                if (type === 't')
-                    hasGimple = true;
-                if (type === 'i')
-                    hasIpa = true;
-                if (type === 'r')
-                    hasRtl = true;
+                const isDot = f.endsWith('.dot');
+                if (isDot) {
+                    if (type === 't')
+                        hasGimpleDot = true;
+                    if (type === 'i')
+                        hasIpaDot = true;
+                    if (type === 'r')
+                        hasRtlDot = true;
+                }
+                else {
+                    if (type === 't')
+                        hasGimple = true;
+                    if (type === 'i')
+                        hasIpa = true;
+                    if (type === 'r')
+                        hasRtl = true;
+                }
             }
-            if (hasGimple && hasIpa && hasRtl)
-                break;
         }
         const items = [];
+        // Standard Dumps
         if (this.visibleCategories.has('GIMPLE') && hasGimple) {
             items.push(new PassItem('GIMPLE Passes', 'group', undefined, baseName));
         }
@@ -188,6 +211,52 @@ class GccPassTreeProvider {
         }
         if (this.visibleCategories.has('RTL') && hasRtl) {
             items.push(new PassItem('RTL Passes', 'group', undefined, baseName));
+        }
+        // Check if we should show "DOT Files" parent folder
+        // It should show ONLY if there is at least one Dot category that is BOTH existing AND visible
+        if ((hasGimpleDot && this.visibleCategories.has('GIMPLE')) ||
+            (hasIpaDot && this.visibleCategories.has('IPA')) ||
+            (hasRtlDot && this.visibleCategories.has('RTL'))) {
+            items.push(new PassItem('DOT Files', 'group', undefined, baseName));
+        }
+        return items;
+    }
+    // --- NEW: Detect and Filter DOT Subgroups ---
+    async getDotSubgroups(baseName) {
+        if (!this.currentDir)
+            return [];
+        const files = await fs.promises.readdir(this.currentDir);
+        let hasGimpleDot = false;
+        let hasIpaDot = false;
+        let hasRtlDot = false;
+        // Regex for DOT files: name.123[tri].pass.dot
+        const dotRegex = /^.+\.\d{3}([tri])\..+\.dot$/;
+        for (const f of files) {
+            if (!f.startsWith(baseName))
+                continue;
+            const match = dotRegex.exec(f);
+            if (match) {
+                const type = match[1];
+                if (type === 't')
+                    hasGimpleDot = true;
+                if (type === 'i')
+                    hasIpaDot = true;
+                if (type === 'r')
+                    hasRtlDot = true;
+            }
+        }
+        const items = [];
+        // Only add the subgroup if:
+        // 1. Files actually exist (hasXDot)
+        // 2. User hasn't filtered it out (visibleCategories.has)
+        if (hasGimpleDot && this.visibleCategories.has('GIMPLE')) {
+            items.push(new PassItem('GIMPLE', 'subgroup', undefined, baseName));
+        }
+        if (hasIpaDot && this.visibleCategories.has('IPA')) {
+            items.push(new PassItem('IPA', 'subgroup', undefined, baseName));
+        }
+        if (hasRtlDot && this.visibleCategories.has('RTL')) {
+            items.push(new PassItem('RTL', 'subgroup', undefined, baseName));
         }
         return items;
     }
@@ -209,27 +278,40 @@ class GccPassTreeProvider {
             return [];
         }
     }
-    async getPassFiles(baseName, category) {
+    async getPassFiles(baseName, category, isDot) {
         if (!this.currentDir)
             return [];
         const files = await fs.promises.readdir(this.currentDir);
         const passFiles = [];
         let targetChar = '';
-        if (category === 'GIMPLE Passes')
+        if (category.includes('GIMPLE'))
             targetChar = 't';
-        else if (category === 'IPA Passes')
+        else if (category.includes('IPA'))
             targetChar = 'i';
-        else if (category === 'RTL Passes')
+        else if (category.includes('RTL'))
             targetChar = 'r';
         const regex = /^(.+)\.(\d{3})([tri])\.(.+)$/;
         for (const f of files) {
             if (!f.startsWith(baseName))
                 continue;
+            if (isDot) {
+                if (!f.endsWith('.dot'))
+                    continue;
+            }
+            else {
+                if (f.endsWith('.dot'))
+                    continue;
+            }
             const match = regex.exec(f);
             if (match) {
                 const [_, fBase, numStr, type, passName] = match;
                 if (fBase === baseName && type === targetChar) {
-                    passFiles.push(new PassItem(passName, 'file', vscode.Uri.file(path.join(this.currentDir, f)), baseName, parseInt(numStr, 10), `Pass ${numStr}`));
+                    // Remove .dot suffix from label for cleaner display
+                    let label = passName;
+                    if (isDot && label.endsWith('.dot')) {
+                        label = label.substring(0, label.length - 4);
+                    }
+                    passFiles.push(new PassItem(isDot ? label : passName, 'file', vscode.Uri.file(path.join(this.currentDir, f)), baseName, parseInt(numStr, 10), `Pass ${numStr}`));
                 }
             }
         }
