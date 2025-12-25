@@ -34,9 +34,9 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GccPassTreeProvider = exports.PassItem = void 0;
-const vscode = __importStar(require("vscode"));
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
+const vscode = __importStar(require("vscode"));
 class PassItem extends vscode.TreeItem {
     label;
     type;
@@ -97,9 +97,7 @@ class GccPassTreeProvider {
             }
         });
     }
-    refresh() {
-        this._onDidChangeTreeData.fire();
-    }
+    refresh() { this._onDidChangeTreeData.fire(); }
     // --- FILTER DIALOG ---
     promptFilter() {
         return new Promise((resolve) => {
@@ -112,7 +110,8 @@ class GccPassTreeProvider {
                 { label: 'RTL', description: 'Show RTL (.r) passes' }
             ];
             quickPick.items = items;
-            quickPick.selectedItems = items.filter(item => this.visibleCategories.has(item.label));
+            quickPick.selectedItems =
+                items.filter(item => this.visibleCategories.has(item.label));
             quickPick.onDidAccept(() => {
                 const selection = quickPick.selectedItems;
                 this.visibleCategories.clear();
@@ -128,12 +127,11 @@ class GccPassTreeProvider {
             quickPick.show();
         });
     }
-    getTreeItem(element) {
-        return element;
-    }
+    getTreeItem(element) { return element; }
     async getChildren(element) {
         if (!this.currentDir && vscode.window.activeTextEditor) {
-            this.currentDir = path.dirname(vscode.window.activeTextEditor.document.uri.fsPath);
+            this.currentDir =
+                path.dirname(vscode.window.activeTextEditor.document.uri.fsPath);
         }
         if (!this.currentDir)
             return [];
@@ -147,7 +145,8 @@ class GccPassTreeProvider {
         }
         // 3. DOT SUBGROUPS (Smart & Filtered)
         if (element.label === 'DOT Files' && element.rootName) {
-            // FIX: Call the smart detector for sub-groups instead of returning static list
+            // FIX: Call the smart detector for sub-groups instead of returning static
+            // list
             return this.getDotSubgroups(element.rootName);
         }
         // 4. FILES (Standard Passes)
@@ -172,7 +171,8 @@ class GccPassTreeProvider {
             return [];
         const files = await fs.promises.readdir(this.currentDir);
         let hasGimple = false, hasIpa = false, hasRtl = false;
-        // Flags to track if we have ANY valid dot files visible under current filter
+        // Flags to track if we have ANY valid dot files visible under current
+        // filter
         let showDotFolder = false;
         let hasGimpleDot = false, hasIpaDot = false, hasRtlDot = false;
         const typeRegex = /^.+\.\d{3}([tri])\..+$/;
@@ -213,7 +213,8 @@ class GccPassTreeProvider {
             items.push(new PassItem('RTL Passes', 'group', undefined, baseName));
         }
         // Check if we should show "DOT Files" parent folder
-        // It should show ONLY if there is at least one Dot category that is BOTH existing AND visible
+        // It should show ONLY if there is at least one Dot category that is BOTH
+        // existing AND visible
         if ((hasGimpleDot && this.visibleCategories.has('GIMPLE')) ||
             (hasIpaDot && this.visibleCategories.has('IPA')) ||
             (hasRtlDot && this.visibleCategories.has('RTL'))) {

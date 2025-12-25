@@ -42,7 +42,7 @@ class GccMdHoverProvider {
         this.mdCache = mdCache;
         this.rtlCache = rtlCache;
     }
-    // No forbidden words. No static dictionaries. 
+    // No forbidden words. No static dictionaries.
     // We trust the caches to contain the truth.
     constraintModifiers = /^[\=\+\&\%\?\!\*\#\^]+/;
     provideHover(document, position) {
@@ -125,7 +125,11 @@ class GccMdHoverProvider {
             end++;
         const rawToken = line.substring(start, end);
         if (rawToken.includes('<') || rawToken.includes('>')) {
-            return { word: rawToken.replace(/[<>]/g, ''), isQuoted: false, isBracketed: true };
+            return {
+                word: rawToken.replace(/[<>]/g, ''),
+                isQuoted: false,
+                isBracketed: true
+            };
         }
         start = charIndex;
         while (start > 0 && /[a-zA-Z0-9_]/.test(line[start - 1]))
@@ -142,7 +146,8 @@ class GccMdHoverProvider {
         let currentPos = 0;
         const parts = content.split(',');
         for (const part of parts) {
-            if (relativeCursor >= currentPos && relativeCursor <= currentPos + part.length) {
+            if (relativeCursor >= currentPos &&
+                relativeCursor <= currentPos + part.length) {
                 return { word: part.trim(), isQuoted: true, isBracketed: false };
             }
             currentPos += part.length + 1;

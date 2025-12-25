@@ -34,9 +34,9 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GCCMdLinkProvider = void 0;
-const vscode = __importStar(require("vscode"));
-const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
+const vscode = __importStar(require("vscode"));
 class GCCMdLinkProvider {
     provideDocumentLinks(document) {
         const links = [];

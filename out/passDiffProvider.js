@@ -34,9 +34,9 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GccPassDiffProvider = void 0;
-const vscode = __importStar(require("vscode"));
-const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
+const vscode = __importStar(require("vscode"));
 class GccPassDiffProvider {
     async compareWithPrevious(currentUri) {
         const dir = path.dirname(currentUri.fsPath);
@@ -57,7 +57,8 @@ class GccPassDiffProvider {
             // Must start with the same base name (e.g. test.c)
             if (!f.startsWith(baseName + '.'))
                 continue;
-            // FIX: Explicitly ignore .dot graph files to prevent duplicate/ambiguous matches
+            // FIX: Explicitly ignore .dot graph files to prevent duplicate/ambiguous
+            // matches
             if (f.endsWith('.dot'))
                 continue;
             const m = fileRegex.exec(f);
@@ -94,7 +95,9 @@ class GccPassDiffProvider {
                 label: c.filename,
                 description: `Pass ${c.number}`,
                 uri: c.uri
-            })), { placeHolder: `Select which pass ${prevNum} file to compare against:` });
+            })), {
+                placeHolder: `Select which pass ${prevNum} file to compare against:`
+            });
             if (selected) {
                 this.openDiff(selected.uri, currentUri, selected.label, currentFilename);
             }

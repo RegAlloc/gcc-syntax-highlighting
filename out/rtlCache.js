@@ -146,7 +146,8 @@ class RtlDefCache {
         return rawLines
             .map(line => {
             let clean = line.trim();
-            clean = clean.replace(/^\/\*+/, '').replace(/\*+\/$/, ''); // Strip start/end /* */
+            clean = clean.replace(/^\/\*+/, '')
+                .replace(/\*+\/$/, ''); // Strip start/end /* */
             clean = clean.replace(/^\*+\s?/, '').trim(); // Strip leading *
             return clean;
         })

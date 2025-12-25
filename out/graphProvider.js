@@ -34,9 +34,9 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GccGraphProvider = void 0;
-const vscode = __importStar(require("vscode"));
-const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
+const vscode = __importStar(require("vscode"));
 class GccGraphProvider {
     async openDotFile(editor) {
         if (!editor)
@@ -64,29 +64,22 @@ class GccGraphProvider {
             try {
                 // 3. Open the .dot file (Force Focus so extension sees it)
                 const dotDoc = await vscode.workspace.openTextDocument(dotUri);
-                await vscode.window.showTextDocument(dotDoc, {
-                    viewColumn: originalColumn,
-                    preserveFocus: false
-                });
+                await vscode.window.showTextDocument(dotDoc, { viewColumn: originalColumn, preserveFocus: false });
                 // 4. Trigger the Preview (Opens in Side Column)
                 await vscode.commands.executeCommand('graphviz-interactive-preview.preview.beside');
                 // 5. CLEANUP SEQUENCE
-                // We delay slightly to let the Preview initialize its data from the file.
+                // We delay slightly to let the Preview initialize its data from the
+                // file.
                 setTimeout(async () => {
                     // Step A: Ensure focus is back on the .dot file (Column 1)
                     // (Just in case the Preview stole focus)
-                    await vscode.window.showTextDocument(dotDoc, {
-                        viewColumn: originalColumn,
-                        preserveFocus: false
-                    });
+                    await vscode.window.showTextDocument(dotDoc, { viewColumn: originalColumn, preserveFocus: false });
                     // Step B: Close the Active Editor (which is now the .dot file)
                     await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
                     // Step C: Ensure the Original Dump is visible/focused
-                    // (Usually happens automatically when tab closes, but this guarantees it)
-                    await vscode.window.showTextDocument(originalDoc, {
-                        viewColumn: originalColumn,
-                        preserveFocus: false
-                    });
+                    // (Usually happens automatically when tab closes, but this guarantees
+                    // it)
+                    await vscode.window.showTextDocument(originalDoc, { viewColumn: originalColumn, preserveFocus: false });
                 }, 250); // 250ms is usually enough for the extension to parse the graph
             }
             catch (error) {

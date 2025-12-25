@@ -34,9 +34,9 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GccMdCache = void 0;
-const vscode = __importStar(require("vscode"));
-const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
+const vscode = __importStar(require("vscode"));
 class BackendContext {
     symbols = new Map();
     wordFilesMap = new Map();
@@ -133,7 +133,8 @@ class GccMdCache {
                     const l = lines[i].trim();
                     if (l === '') {
                         // CRITICAL FIX: Stop immediately on a blank line.
-                        // This prevents merging the definition docs with the File Header/License.
+                        // This prevents merging the definition docs with the File
+                        // Header/License.
                         break;
                     }
                     if (l.startsWith(';')) {

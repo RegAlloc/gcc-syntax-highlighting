@@ -34,9 +34,9 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GccPassSurferProvider = void 0;
-const vscode = __importStar(require("vscode"));
-const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
+const vscode = __importStar(require("vscode"));
 class GccPassSurferProvider {
     async navigate(editor, direction) {
         if (!editor)
@@ -62,10 +62,12 @@ class GccPassSurferProvider {
         catch (e) {
             return;
         }
-        const siblings = files.filter(f => {
+        const siblings = files
+            .filter(f => {
             const m = regex.exec(f);
             return m && m[1] === baseName && m[3] === typeChar;
-        }).sort((a, b) => {
+        })
+            .sort((a, b) => {
             const numA = parseInt(regex.exec(a)[2]);
             const numB = parseInt(regex.exec(b)[2]);
             return numA - numB;
@@ -91,10 +93,7 @@ class GccPassSurferProvider {
         // 5. Open the Document
         // preview: false forces a real tab to be created.
         const doc = await vscode.workspace.openTextDocument(targetUri);
-        const newEditor = await vscode.window.showTextDocument(doc, {
-            viewColumn: vscode.ViewColumn.Active,
-            preview: false
-        });
+        const newEditor = await vscode.window.showTextDocument(doc, { viewColumn: vscode.ViewColumn.Active, preview: false });
         // 6. The Fix: Correct Command for Tabs
         if (direction === 'prev') {
             // Wait briefly for the tab to initialize

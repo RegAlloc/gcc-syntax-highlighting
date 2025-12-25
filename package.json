@@ -43,7 +43,7 @@
   },
   "capabilities": {
     "untrustedWorkspaces": {
-        "supported": true
+      "supported": true
     }
   },
   "categories": [
@@ -61,7 +61,7 @@
         {
           "id": "gcc-explorer",
           "title": "GCC Explorer",
-          "icon": "$(beaker)" 
+          "icon": "$(beaker)"
         }
       ]
     },
@@ -74,33 +74,33 @@
       ]
     },
     "commands": [
-        {
-            "command": "gcc-md.openFilePermanent",
-            "title": "Open MD Include"
-        },
-        {
+      {
+        "command": "gcc-md.openFilePermanent",
+        "title": "Open MD Include"
+      },
+      {
         "command": "gcc-md.comparePreviousPass",
         "title": "Compare with Previous Pass",
         "icon": "$(diff-multiple)"
-        },
-        {
-          "command": "gcc-md.refreshPasses",
-          "title": "Refresh Passes",
-          "icon": "$(refresh)" 
-        },
-        {
+      },
+      {
+        "command": "gcc-md.refreshPasses",
+        "title": "Refresh Passes",
+        "icon": "$(refresh)"
+      },
+      {
         "command": "gcc-md.filterPasses",
         "title": "Filter Categories",
         "icon": "$(filter)"
-        },
-        {
+      },
+      {
         "command": "gcc-md.toggleFocus",
         "title": "Hide Noise",
         "icon": "$(eye-closed)"
       },
       {
-        "command": "gcc-md.toggleFocus_on", 
-        "title": "Show Noise", 
+        "command": "gcc-md.toggleFocus_on",
+        "title": "Show Noise",
         "icon": "$(eye)"
       },
       {
@@ -120,19 +120,19 @@
       }
     ],
     "keybindings": [
-   {
-      "command": "gcc-md.prevPass",
-      "key": "ctrl+alt+[",
-      "mac": "ctrl+alt+[", 
-      "when": "editorTextFocus && resourceFilename =~ /\\.[0-9]{3}[tir]\\.[^.]+$/"
-    },
-    {
-      "command": "gcc-md.nextPass",
-      "key": "ctrl+alt+]",
-      "mac": "ctrl+alt+]",
-      "when": "editorTextFocus && resourceFilename =~ /\\.[0-9]{3}[tir]\\.[^.]+$/"
-    } 
-  ],
+      {
+        "command": "gcc-md.prevPass",
+        "key": "ctrl+alt+[",
+        "mac": "ctrl+alt+[",
+        "when": "editorTextFocus && resourceFilename =~ /\\.[0-9]{3}[tir]\\.[^.]+$/"
+      },
+      {
+        "command": "gcc-md.nextPass",
+        "key": "ctrl+alt+]",
+        "mac": "ctrl+alt+]",
+        "when": "editorTextFocus && resourceFilename =~ /\\.[0-9]{3}[tir]\\.[^.]+$/"
+      }
+    ],
     "menus": {
       "editor/title": [
         {
@@ -177,7 +177,7 @@
           "when": "view == gcc-dump-explorer",
           "group": "navigation"
         }
-      ] 
+      ]
     },
     "languages": [
       {
@@ -229,7 +229,7 @@
           "GCC RTL Dump"
         ],
         "filenamePatterns": [
-         "**/*.[0-9][0-9][0-9]r.[^.]*"
+          "**/*.[0-9][0-9][0-9]r.[^.]*"
         ],
         "configuration": "./language-configuration.json",
         "icon": {

@@ -41,8 +41,8 @@ class GccMdSymbolProvider {
         this.cache = cache;
     }
     forbiddenWords = new Set([
-        'match_dup', 'match_operand', 'match_scratch', 'match_operator',
-        'set', 'clobber', 'const_int', 'const_string'
+        'match_dup', 'match_operand', 'match_scratch', 'match_operator', 'set',
+        'clobber', 'const_int', 'const_string'
     ]);
     // Constraint modifiers to strip: =, +, &, %, ?, !, *, #, ^
     constraintModifiers = /^[\=\+\&\%\?\!\*\#\^]+/;
@@ -59,8 +59,9 @@ class GccMdSymbolProvider {
         // 2. Determine Priority
         let candidates = [];
         if (isQuoted) {
-            // If quoted, we now treat it specifically as a Constraint/Predicate list item
-            // This handles "r,I,L,eI" -> clicking 'eI' searches for constraint "eI"
+            // If quoted, we now treat it specifically as a Constraint/Predicate list
+            // item This handles "r,I,L,eI" -> clicking 'eI' searches for constraint
+            // "eI"
             candidates = this.cache.getAllSymbols(document.uri, cleanWord);
             // Priority: Constraint > Predicate > Attribute
             let bestMatch = candidates.find(s => s.type === 'constraint');
@@ -124,8 +125,8 @@ class GccMdSymbolProvider {
             }
         }
         // 2. Check for Bracketed Context: <...>
-        // Simple regex fallback for iterators since they don't contain commas usually
-        // Find the word boundaries around the cursor
+        // Simple regex fallback for iterators since they don't contain commas
+        // usually Find the word boundaries around the cursor
         let start = charIndex;
         while (start > 0 && /[a-zA-Z0-9_<>]/.test(line[start - 1]))
             start--;
@@ -134,7 +135,11 @@ class GccMdSymbolProvider {
             end++;
         const rawToken = line.substring(start, end);
         if (rawToken.includes('<') || rawToken.includes('>')) {
-            return { word: rawToken.replace(/[<>]/g, ''), isQuoted: false, isBracketed: true };
+            return {
+                word: rawToken.replace(/[<>]/g, ''),
+                isQuoted: false,
+                isBracketed: true
+            };
         }
         // 3. Fallback: Bare word (constants, unspecs)
         start = charIndex;
@@ -156,7 +161,8 @@ class GccMdSymbolProvider {
             const partLen = part.length;
             // Check if cursor falls within this segment (accounting for the comma)
             // relativeCursor is 0-based index inside "r,I,L"
-            if (relativeCursor >= currentPos && relativeCursor <= currentPos + partLen) {
+            if (relativeCursor >= currentPos &&
+                relativeCursor <= currentPos + partLen) {
                 return { word: part.trim(), isQuoted: true, isBracketed: false };
             }
             currentPos += partLen + 1; // +1 for the comma

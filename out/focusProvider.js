@@ -36,9 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GccFocusProvider = void 0;
 const vscode = __importStar(require("vscode"));
 class GccFocusProvider {
-    noiseDecorationType = vscode.window.createTextEditorDecorationType({
-        opacity: '0.2'
-    });
+    noiseDecorationType = vscode.window.createTextEditorDecorationType({ opacity: '0.2' });
     activeEditors = new Set(); // Store URI strings for safety
     toggleFocusMode(editor) {
         if (!editor)
