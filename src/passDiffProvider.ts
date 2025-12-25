@@ -17,8 +17,6 @@ export class GccPassDiffProvider {
         const currentFilename = path.basename(currentUri.fsPath);
 
         // 1. Parse the current file: test.c.286r.combine
-        // Regex: (base).(number)(type).(passname)
-        // We match strictly 3 digits as per your spec, but allow flexible base names.
         const fileRegex = /^(.+)\.(\d{3})([tri])\.(.+)$/;
         const match = fileRegex.exec(currentFilename);
 
@@ -38,6 +36,9 @@ export class GccPassDiffProvider {
             // Must start with the same base name (e.g. test.c)
             if (!f.startsWith(baseName + '.')) continue;
 
+            // FIX: Explicitly ignore .dot graph files to prevent duplicate/ambiguous matches
+            if (f.endsWith('.dot')) continue;
+
             const m = fileRegex.exec(f);
             if (m) {
                 siblings.push({
@@ -51,16 +52,11 @@ export class GccPassDiffProvider {
         }
 
         // 3. Sort by Pass Number
-        // Gimple (t) passes come before RTL (r) generally, but the numbers usually handle this.
         siblings.sort((a, b) => a.number - b.number);
 
         // 4. Find the "Previous" Set
-        // We look for the distinct number immediately preceding the current one.
-        // We do not compare siblings with the SAME number (e.g. 280r.cse2 vs 280r.fwprop1)
-        // because their order is ambiguous without parsing internal GCC logs.
-        
         const validPrevious = siblings.filter(s => s.number < currentNum);
-        
+
         if (validPrevious.length === 0) {
             vscode.window.showInformationMessage(`No previous pass found before ${currentFilename}.`);
             return;
@@ -68,7 +64,7 @@ export class GccPassDiffProvider {
 
         // Get the highest number from the list (closest to current)
         const prevNum = validPrevious[validPrevious.length - 1].number;
-        
+
         // Collect all files sharing that previous number
         const candidates = validPrevious.filter(s => s.number === prevNum);
 
@@ -77,13 +73,12 @@ export class GccPassDiffProvider {
             // Perfect case: Only one file exists for the previous pass
             this.openDiff(candidates[0].uri, currentUri, candidates[0].filename, currentFilename);
         } else {
-            // Ambiguous case: Multiple files have the same previous ID (e.g. 279r.cprop3 and 279r.cse1)
-            // Ask the user which one they want to compare against.
+            // Ambiguous case: Multiple files have the same previous ID
             const selected = await vscode.window.showQuickPick(
-                candidates.map(c => ({ 
-                    label: c.filename, 
+                candidates.map(c => ({
+                    label: c.filename,
                     description: `Pass ${c.number}`,
-                    uri: c.uri 
+                    uri: c.uri
                 })),
                 { placeHolder: `Select which pass ${prevNum} file to compare against:` }
             );
