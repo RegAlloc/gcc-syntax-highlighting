@@ -47,7 +47,10 @@
     }
   },
   "categories": [
-    "Programming Languages", "Visualization", "Snippets", "Language Packs"
+    "Programming Languages",
+    "Visualization",
+    "Snippets",
+    "Language Packs"
   ],
   "contributes": {
     "snippets": [
@@ -357,5 +360,10 @@
         "*.svg": "svg"
       }
     }
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.3",
+    "@types/vscode": "^1.50.0",
+    "typescript": "^5.9.3"
   }
 }
