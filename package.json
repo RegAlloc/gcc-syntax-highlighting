@@ -117,7 +117,12 @@
         "command": "gcc-md.prevPass",
         "title": "Previous Pass",
         "icon": "$(arrow-left)"
-      }
+      },
+      {
+      "command": "gcc-md.showPipeline",
+      "title": "Show Optimization Pipeline",
+      "icon": "$(graph)"
+    }
     ],
     "keybindings": [
       {
@@ -164,7 +169,12 @@
           "command": "gcc-md.nextPass",
           "group": "navigation@2",
           "when": "editorLangId == gcc-rtl || editorLangId == gcc-gimple"
-        }
+        },
+        {
+        "command": "gcc-md.showPipeline",
+        "when": "resourceLangId == c || resourceLangId == cpp",
+        "group": "navigation"
+      }
       ],
       "view/title": [
         {

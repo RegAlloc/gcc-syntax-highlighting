@@ -48,6 +48,7 @@ const passDiffProvider_1 = require("./passDiffProvider");
 const passSurferProvider_1 = require("./passSurferProvider");
 const passTreeProvider_1 = require("./passTreeProvider");
 const rtlCache_1 = require("./rtlCache");
+const pipelineProvider_1 = require("./pipelineProvider");
 const mdCache = new mdCache_1.GccMdCache();
 const rtlCache = new rtlCache_1.RtlDefCache();
 const diffProvider = new passDiffProvider_1.GccPassDiffProvider();
@@ -55,6 +56,7 @@ const focusProvider = new focusProvider_1.GccFocusProvider();
 const graphProvider = new graphProvider_1.GccGraphProvider();
 const surferProvider = new passSurferProvider_1.GccPassSurferProvider();
 const initializedBackends = new Set();
+const pipelineProvider = new pipelineProvider_1.GccPipelineProvider();
 async function activate(context) {
     // 1. Helper: Auto-detect GCC Dump Language
     // Checks for .t (GIMPLE), .r (RTL), .i (IPA)
@@ -163,6 +165,15 @@ async function activate(context) {
     context.subscriptions.push(watcher.onDidChange((uri) => mdCache.indexFile(uri)));
     context.subscriptions.push(watcher.onDidCreate((uri) => mdCache.indexFile(uri)));
     context.subscriptions.push(watcher);
+    context.subscriptions.push(vscode.commands.registerCommand('gcc-md.showPipeline', () => {
+        const editor = vscode.window.activeTextEditor;
+        if (editor) {
+            pipelineProvider.show(editor, context.extensionUri);
+        }
+        else {
+            vscode.window.showErrorMessage("Open a C/C++ file first.");
+        }
+    }));
 }
 function deactivate() { }
 //# sourceMappingURL=extension.js.map

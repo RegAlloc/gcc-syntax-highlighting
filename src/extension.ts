@@ -12,6 +12,7 @@ import {GccPassDiffProvider} from './passDiffProvider';
 import {GccPassSurferProvider} from './passSurferProvider';
 import {GccPassTreeProvider} from './passTreeProvider';
 import {RtlDefCache} from './rtlCache';
+import { GccPipelineProvider } from './pipelineProvider';
 
 const mdCache = new GccMdCache();
 const rtlCache = new RtlDefCache();
@@ -20,6 +21,7 @@ const focusProvider = new GccFocusProvider();
 const graphProvider = new GccGraphProvider();
 const surferProvider = new GccPassSurferProvider();
 const initializedBackends = new Set<string>();
+const pipelineProvider = new GccPipelineProvider();
 
 export async function activate(context: vscode.ExtensionContext) {
 
@@ -163,6 +165,15 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
       watcher.onDidCreate((uri) => mdCache.indexFile(uri)));
   context.subscriptions.push(watcher);
+
+  context.subscriptions.push(vscode.commands.registerCommand('gcc-md.showPipeline', () => {
+    const editor = vscode.window.activeTextEditor;
+    if (editor) {
+        pipelineProvider.show(editor, context.extensionUri);
+    } else {
+        vscode.window.showErrorMessage("Open a C/C++ file first.");
+    }
+}));
 }
 
 export function deactivate() {}

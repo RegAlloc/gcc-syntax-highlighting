@@ -43,7 +43,7 @@
     "description": "Define a split pattern"
   },
   "Match Operand": {
-    "prefix": "match",
+    "prefix": "matchop",
     "body": "(match_operand:${1:SI} ${2:0} \"${3:register_operand}\" \"${4:r}\")",
     "description": "Insert a match_operand"
   }
