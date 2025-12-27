@@ -1,9 +1,86 @@
-# GCC Syntax Highlighting – GCC internals in color
+# GCC Workbench
 
-**Extension version:** 1.0.0
+<p align="center">
+  <img src="pictures/gcc.png" alt="GCC Workbench Logo" width="300"/>
+</p>
 
-This repository contains a Visual Studio Code / VSCodium extension that adds syntax highlighting for **GCC internals**.
-It is aimed at people working on GCC itself or regularly reading GCC dumps.
+**Extension version:** 2.0.0
+
+This repository contains **GCC Workbench**, a Visual Studio Code / VSCodium extension designed to make life easier for GCC compiler engineers.
+
+It goes beyond simple syntax highlighting for **GCC internals** by adding navigation, visualization, and noise-filtering tools specifically tailored for GCC's internal dump files (`.rtl`, `.gimple`, `.md`).
+
+## What is this useful for?
+
+GCC produces hundreds of dump files during compilation. navigating them manually is tedious, and reading them is often cluttered with debug noise. This extension organizes that chaos into a simple workspace.
+
+---
+
+## 🔧 Workbench Features
+
+### 1. Compilation Pass Explorer
+Instead of `ls -ltr *expand*`, use the **GCC Explorer** sidebar view.
+* Automatically finds all GCC dump files (`.t`, `.r`, `.i`) in your workspace.
+* Sorts them chronologically by pass number (e.g., `005t` -> `300r`).
+* Filters passes by type (GIMPLE vs RTL) or name.
+* **Explorer Review:** ![Match Pattern Preview](pictures/Explorer.png)
+
+### 2. Pass Navigation ("Surfing")
+Move through the compilation pipeline without leaving the editor.
+* **Next/Prev Pass:** Click the arrow icons in the editor title bar (or use `Ctrl+Alt+]` / `Ctrl+Alt+[`) to jump to the immediate next or previous pass file.
+* **Context Aware:** Automatically detects if you are in a GIMPLE or RTL file and finds the correct successor.
+
+### 3. Pass Diff
+* **Compare with Previous:** One-click button to open a diff view against the previous pass.
+* Instantly visualize exactly what optimizations were performed by a specific pass.
+* **Diff-view:** ![Diff-view](pictures/Diff-view.png)
+
+### 4. Focus Mode (Noise Filter)
+RTL and GIMPLE dumps are often 50% metadata.
+* **Toggle Noise:** Click the **Eye Icon** to hide `.loc` lines, `.cfi` directives, basic block headers, and verbose comments.
+* Helps you focus purely on the instruction logic and data flow.
+
+### 5. Control Flow Visualization
+* **Open Graph:** One-click button to render the current dump as a Control Flow Graph (CFG) using Graphviz.
+* *Note: Requires a generic Graphviz/DOT extension to be installed for the final rendering.*
+* **cfg graphviz:** ![cfg-graphviz](pictures/cfg.png)
+
+### 6. Intelligent MDL/RTL Editing
+* **Go to Definition:** Jump from iterator usages or attribute names in `.md` files directly to their definitions.
+* **Hovers:** Hover over standard RTL codes (like `define_insn`, `parallel`, `set`) to view their official documentation (parsed directly from `rtl.def`).
+
+---
+
+## 🎨 Syntax Highlighting Support
+
+When hacking on GCC, you often need to read and understand complex internal formats. Reading all of this as plain, uncolored text is painful. This extension provides TextMate grammars to support the following:
+
+### 1. Machine Description Files (`.md`)
+* **Constructs:** `define_insn`, `define_expand`, `define_split`, `define_peephole2`, iterators, attributes.
+* **Operands:** Distinct coloring for registers, modes, and constraints.
+* **Embedded Code:** Highlights C/C++ blocks embedded inside MD files.
+![GCC Machine Description Preview](pictures/GCC-Machine-Description.png)
+
+### 2. RTL Dumps (`.expand`, `.vregs`, etc.)
+* **Records:** `insn`, `jump_insn`, `call_insn`, `note`, `barrier`, `code_label`.
+* **Data:** Registers (`reg:DI 3`), vector modes, `const_int`.
+* **Screenshot:** `pictures/RTL-Dump.png`
+
+### 3. GIMPLE Dumps (`.ssa`, `.optimized`, etc.)
+* **Structure:** Basic blocks, PHI nodes, and SSA names.
+* **Statements:** `gimple_call`, `gimple_assign`, `gimple_cond`, `gimple_switch`.
+
+### 4. `match.pd` Patterns
+* **Rules:** `match` / `simplify` rules.
+* **Trees:** Operator trees (e.g., `plus`, `mult`, `bit_and`) and capture logic (`@x`).
+* **Match.pd :** ![Match Pattern Preview](pictures/Match.png)
+
+### 5. Additional Formats
+* **PowerPC/RS6000 Builtins:** `rs6000-builtin.def` highlighting.
+* **Option Files:** `.opt` syntax support.
+* **DejaGnu Scripts:** `.exp` syntax support.
+
+---
 
 ## License
 
@@ -18,52 +95,9 @@ See the [LICENSE](./LICENSE) file for details.
 
 ---
 
-## What this is useful for
-
-When hacking on GCC, you often need to read and understand complex internal formats. Reading all of this as plain, uncolored text is painful. This extension provides TextMate grammars to support the following:
-
-### 1. Machine Description Files (`.md`)
-* **Constructs:** `define_insn`, `define_expand`, `define_split`, `define_peephole2`, iterators, attributes, `match_operand`, and RTL patterns.
-* **Embedded Code:** Highlights C/C++ blocks embedded inside MD files.
-* **Operands:** Distinct coloring for registers, modes, and constraints.
-
-### 2. RTL Dumps (`.expand`, `.vregs`, etc.)
-* **Records:** `insn`, `jump_insn`, `call_insn`, `note`, `barrier`, `code_label`, `debug_insn`.
-* **Structure:** `set`, `parallel`, `clobber`, `use`, plus arithmetic and logical RTL operators.
-* **Data:** Registers (`reg:DI 3`), vector modes, `const_int`, and other constants.
-
-### 3. GIMPLE Dumps (`.ssa`, `.optimized`, etc.)
-* **Control Flow:** Basic block headers (`<bb 3>`) and metadata.
-* **Statements:** `gimple_call`, `gimple_assign`, `gimple_cond`, `gimple_switch`, `gimple_label`.
-* **Dataflow:** PHI nodes and SSA names are highlighted to easily trace data flow.
-
-### 4. `match.pd` Patterns
-* **Rules:** `match` / `simplify` rules and helper definitions.
-* **Trees:** Operator trees (e.g., `plus`, `mult`, `bit_and`, `lshift`, `cond`, `vec_perm`, `fma`).
-* **Captures:** Highlights captures like `@x` and `@@y`, along with embedded C/C++ action code.
-
-### 5. PowerPC/RS6000 Builtins
-* Specific highlighting for `rs6000-builtin.def` files and related 6000-series definitions.
-
-### 6. Option files (.opt)
-
-### 7. DejaGnu expect scripts (.exp)
-
----
-
-## Syntax Highlighting Preview
-
-### Match Pattern (`match.pd`)
-![Match Pattern Preview](pictures/Match.png)
-
-### GCC Machine Description (`.md`)
-![GCC Machine Description Preview](pictures/GCC-Machine-Description.png)
-
----
-
 ### Project Status & Contributing
 
-My foundational work on this extension is complete. The project is now open for the community to utilize, maintain, and evolve.
+The project is now open for the community to utilize, maintain, and evolve.
 
 * **Found a bug?**
     Please raise an issue on the issue tracker:

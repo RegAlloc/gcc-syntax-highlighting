@@ -1,8 +1,8 @@
 {
   "name": "gcc-syntax-highlighting",
-  "displayName": "GCC Syntax Highlighting Toolkit (RTL, GIMPLE & MD)",
-  "description": "Syntax highlighting for GCC RTL, Gimple, Match.pd, and Machine Description files",
-  "version": "1.0.0",
+  "displayName": "GCC Workbench (RTL, GIMPLE & MD)",
+  "description": "The professional workspace for GCC engineers. Filter noise, and navigate Machine description files, RTL/GIMPLE dumps.",
+  "version": "2.0.0",
   "author": {
     "name": "Kishan Parmar",
     "email": "kparmar2101@gmail.com",
@@ -12,12 +12,12 @@
   "icon": "pictures/gcc.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/RegAlloc/gcc-syntax-highlighting/"
+    "url": "https://github.com/RegAlloc/gcc-workbench/"
   },
   "bugs": {
-    "url": "https://github.com/RegAlloc/gcc-syntax-highlighting/issues"
+    "url": "https://github.com/RegAlloc/gcc-workbench/issues"
   },
-  "homepage": "https://github.com/RegAlloc/gcc-syntax-highlighting/",
+  "homepage": "https://github.com/RegAlloc/gcc-workbench/",
   "_license": {
     "name": "GPL-3.0-or-later",
     "copyright": "Copyright (C) 2025 Kishan Parmar",
@@ -47,7 +47,7 @@
     }
   },
   "categories": [
-    "Programming Languages"
+    "Programming Languages", "Visualization", "Snippets", "Language Packs"
   ],
   "contributes": {
     "snippets": [
