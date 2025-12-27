@@ -52,6 +52,16 @@
     "Snippets",
     "Language Packs"
   ],
+  "activationEvents": [
+    "onLanguage:gcc-md",
+    "onLanguage:gcc-rtl",
+    "onLanguage:gcc-gimple",
+    "onLanguage:gcc-match",
+    "onLanguage:rs6000-builtins",
+    "onLanguage:rs6000-overload",
+    "onView:gcc-dump-explorer",
+    "onCommand:gcc-dump.showPipeline"
+  ],
   "contributes": {
     "snippets": [
       {
