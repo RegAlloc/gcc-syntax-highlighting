@@ -72,7 +72,7 @@ class GccFocusProvider {
     }
     // Tell VS Code to show/hide the "Eye" button
     updateContext(isActive) {
-        vscode.commands.executeCommand('setContext', 'gcc-md.focusModeActive', isActive);
+        vscode.commands.executeCommand('setContext', 'gcc-dump.focusModeActive', isActive);
     }
     applyDecoration(editor) {
         const text = editor.document.getText();

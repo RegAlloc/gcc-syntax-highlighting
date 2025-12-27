@@ -107,7 +107,7 @@ async function activate(context) {
             focusProvider.restoreState(editor);
         }
         else {
-            vscode.commands.executeCommand('setContext', 'gcc-md.focusModeActive', false);
+            vscode.commands.executeCommand('setContext', 'gcc-dump.focusModeActive', false);
         }
     }));
     // 5. Providers & Commands
@@ -123,33 +123,38 @@ async function activate(context) {
     context.subscriptions.push(vscode.commands.registerCommand('gcc-md.openFilePermanent', (uri) => {
         vscode.window.showTextDocument(uri, { preview: false });
     }));
-    context.subscriptions.push(vscode.commands.registerCommand('gcc-md.refreshPasses', () => treeProvider.refresh()));
-    context.subscriptions.push(vscode.commands.registerCommand('gcc-md.filterPasses', () => treeProvider.promptFilter()));
+    context.subscriptions.push(vscode.commands.registerCommand('gcc-dump.refreshPasses', () => treeProvider.refresh()));
+    context.subscriptions.push(vscode.commands.registerCommand('gcc-dump.filterPasses', () => treeProvider.promptFilter()));
     // Focus Mode
-    context.subscriptions.push(vscode.commands.registerCommand('gcc-md.toggleFocus', () => {
+    context.subscriptions.push(vscode.commands.registerCommand('gcc-dump.toggleFocus', () => {
         const editor = vscode.window.activeTextEditor;
         if (editor)
             focusProvider.toggleFocusMode(editor);
     }));
+    context.subscriptions.push(vscode.commands.registerCommand('gcc-dump.toggleFocus_on', () => {
+        const editor = vscode.window.activeTextEditor;
+        if (editor)
+            focusProvider.toggleFocusMode(editor); // Same logic!
+    }));
     // Graph Launcher
-    context.subscriptions.push(vscode.commands.registerCommand('gcc-md.openDotFile', () => {
+    context.subscriptions.push(vscode.commands.registerCommand('gcc-dump.openDotFile', () => {
         const editor = vscode.window.activeTextEditor;
         if (editor)
             graphProvider.openDotFile(editor);
     }));
     // Pass Surfer
-    context.subscriptions.push(vscode.commands.registerCommand('gcc-md.nextPass', () => {
+    context.subscriptions.push(vscode.commands.registerCommand('gcc-dump.nextPass', () => {
         const editor = vscode.window.activeTextEditor;
         if (editor)
             surferProvider.navigate(editor, 'next');
     }));
-    context.subscriptions.push(vscode.commands.registerCommand('gcc-md.prevPass', () => {
+    context.subscriptions.push(vscode.commands.registerCommand('gcc-dump.prevPass', () => {
         const editor = vscode.window.activeTextEditor;
         if (editor)
             surferProvider.navigate(editor, 'prev');
     }));
     // Time Travel (Diff)
-    context.subscriptions.push(vscode.commands.registerCommand('gcc-md.comparePreviousPass', async () => {
+    context.subscriptions.push(vscode.commands.registerCommand('gcc-dump.comparePreviousPass', async () => {
         const editor = vscode.window.activeTextEditor;
         if (editor) {
             await diffProvider.compareWithPrevious(editor.document.uri);

@@ -53,7 +53,7 @@
     "snippets": [
       {
         "language": "gcc-md",
-        "path": "./snippets/gcc-md.json"
+        "path": "./snippets/gcc-dump.json"
       }
     ],
     "viewsContainers": {
@@ -79,55 +79,55 @@
         "title": "Open MD Include"
       },
       {
-        "command": "gcc-md.comparePreviousPass",
+        "command": "gcc-dump.comparePreviousPass",
         "title": "Compare with Previous Pass",
         "icon": "$(diff-multiple)"
       },
       {
-        "command": "gcc-md.refreshPasses",
+        "command": "gcc-dump.refreshPasses",
         "title": "Refresh Passes",
         "icon": "$(refresh)"
       },
       {
-        "command": "gcc-md.filterPasses",
+        "command": "gcc-dump.filterPasses",
         "title": "Filter Categories",
         "icon": "$(filter)"
       },
       {
-        "command": "gcc-md.toggleFocus",
+        "command": "gcc-dump.toggleFocus",
         "title": "Hide Noise",
         "icon": "$(eye-closed)"
       },
       {
-        "command": "gcc-md.toggleFocus_on",
+        "command": "gcc-dump.toggleFocus_on",
         "title": "Show Noise",
         "icon": "$(eye)"
       },
       {
-        "command": "gcc-md.openDotFile",
+        "command": "gcc-dump.openDotFile",
         "title": "Open Graph (CFG)",
         "icon": "$(layers-dot)"
       },
       {
-        "command": "gcc-md.nextPass",
+        "command": "gcc-dump.nextPass",
         "title": "Next Pass",
         "icon": "$(arrow-right)"
       },
       {
-        "command": "gcc-md.prevPass",
+        "command": "gcc-dump.prevPass",
         "title": "Previous Pass",
         "icon": "$(arrow-left)"
       }
     ],
     "keybindings": [
       {
-        "command": "gcc-md.prevPass",
+        "command": "gcc-dump.prevPass",
         "key": "ctrl+alt+[",
         "mac": "ctrl+alt+[",
         "when": "editorTextFocus && resourceFilename =~ /\\.[0-9]{3}[tir]\\.[^.]+$/"
       },
       {
-        "command": "gcc-md.nextPass",
+        "command": "gcc-dump.nextPass",
         "key": "ctrl+alt+]",
         "mac": "ctrl+alt+]",
         "when": "editorTextFocus && resourceFilename =~ /\\.[0-9]{3}[tir]\\.[^.]+$/"
@@ -136,44 +136,44 @@
     "menus": {
       "editor/title": [
         {
-          "command": "gcc-md.comparePreviousPass",
+          "command": "gcc-dump.comparePreviousPass",
           "when": "resourceFilename =~ /\\.[0-9]{3}[tir]\\./",
-          "group": "navigation"
+          "group": "navigation@1"
         },
         {
-          "command": "gcc-md.toggleFocus",
-          "when": "resourceFilename =~ /\\.[0-9]{3}[tir]\\.[^.]+$/ && !gcc-md.focusModeActive",
-          "group": "navigation"
+          "command": "gcc-dump.toggleFocus",
+          "when": "resourceFilename =~ /\\.[0-9]{3}[tir]\\.[^.]+$/ && !gcc-dump.focusModeActive",
+          "group": "navigation@2"
         },
         {
-          "command": "gcc-md.toggleFocus_on",
-          "when": "resourceFilename =~ /\\.[0-9]{3}[tir]\\.[^.]+$/ && gcc-md.focusModeActive",
-          "group": "navigation"
+          "command": "gcc-dump.toggleFocus_on",
+          "when": "resourceFilename =~ /\\.[0-9]{3}[tir]\\.[^.]+$/ && gcc-dump.focusModeActive",
+          "group": "navigation@2"
         },
         {
-          "command": "gcc-md.openDotFile",
+          "command": "gcc-dump.openDotFile",
           "when": "resourceFilename =~ /\\.[0-9]{3}[tir]\\.[^.]+$/",
-          "group": "navigation"
+          "group": "navigation@3"
         },
         {
-          "command": "gcc-md.prevPass",
-          "group": "navigation@1",
+          "command": "gcc-dump.prevPass",
+          "group": "navigation@4",
           "when": "editorLangId == gcc-rtl || editorLangId == gcc-gimple"
         },
         {
-          "command": "gcc-md.nextPass",
-          "group": "navigation@2",
+          "command": "gcc-dump.nextPass",
+          "group": "navigation@5",
           "when": "editorLangId == gcc-rtl || editorLangId == gcc-gimple"
         }
       ],
       "view/title": [
         {
-          "command": "gcc-md.refreshPasses",
+          "command": "gcc-dump.refreshPasses",
           "when": "view == gcc-dump-explorer",
           "group": "navigation"
         },
         {
-          "command": "gcc-md.filterPasses",
+          "command": "gcc-dump.filterPasses",
           "when": "view == gcc-dump-explorer",
           "group": "navigation"
         }
