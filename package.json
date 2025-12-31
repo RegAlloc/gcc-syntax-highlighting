@@ -60,7 +60,7 @@
     "onLanguage:rs6000-builtins",
     "onLanguage:rs6000-overload",
     "onView:gcc-dump-explorer",
-    "onCommand:gcc-dump.showPipeline"
+    "onCommand:gcc-workbench.viewSource"
   ],
   "contributes": {
     "snippets": [
