@@ -10,20 +10,6 @@ This repository contains **GCC Workbench**, a Visual Studio Code / VSCodium exte
 
 It goes beyond simple syntax highlighting for **GCC internals** by adding navigation, visualization, and noise-filtering tools specifically tailored for GCC's internal dump files (`.rtl`, `.gimple`, `.md`).
 
----
-## Support the Project
-
-GCC Workbench is an open-source labor of love dedicated to making compiler internals accessible and productive.
-Maintaining and innovating on these tools requires time and research.
-
-If this extension has improved your workflow or helped you debug a complex RTL issue, consider supporting its ongoing development.
-
-<div align="center">
-  <a href="https://www.buymeacoffee.com/RegAlloc">
-    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" >
-  </a>
-</div>
-
 
 ## What is this useful for?
 
@@ -114,6 +100,18 @@ When hacking on GCC, you often need to read and understand complex internal form
 * **DejaGnu Scripts:** `.exp` syntax support.
 
 ---
+## Support the Project
+
+GCC Workbench is an open-source labor of love dedicated to making compiler internals accessible and productive.
+Maintaining and innovating on these tools requires time and research.
+
+If this extension has improved your workflow or helped you debug a complex RTL issue, consider supporting its ongoing development.
+
+<div align="center">
+  <a href="https://www.buymeacoffee.com/RegAlloc">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" >
+  </a>
+</div>
 
 ## License
 
